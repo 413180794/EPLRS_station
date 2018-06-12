@@ -13,8 +13,8 @@ class PositionDataBean:
     usage = typed_property("usage", str)
     device_category = typed_property("device_category", str)
     device_id = typed_property("device_id", int)
-    position_x = typed_property("position_x", int)
-    position_y = typed_property("position_y", int)
+    position_x = typed_property("position_x", float)
+    position_y = typed_property("position_y", float)
 
     ENCODE_TYPE = "utf-8"
 
@@ -27,7 +27,7 @@ class PositionDataBean:
 
     @staticmethod
     def format_():
-        return "!16s16siii"
+        return "!16s16sidd"
 
     @property
     def all_data(self):

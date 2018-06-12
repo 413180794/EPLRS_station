@@ -1,0 +1,11 @@
+2018-06-12 14:44:10,833 - MeasureDataBean.py - ERROR -69 - 'QLabel' object has no attribute 'count'
+2018-06-12 14:44:15,968 - MeasureDataBean.py - ERROR -69 - 'QLabel' object has no attribute 'count'
+2018-06-12 14:44:58,998 - MeasureDataBean.py - ERROR -69 - an integer is required (got type QLabel)
+2018-06-12 14:46:04,643 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_data_handle'
+2018-06-12 14:47:34,603 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_data_handle'
+2018-06-12 14:47:43,382 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_data_handle'
+2018-06-12 14:50:10,861 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_data_handle'
+2018-06-12 14:50:12,325 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_data_handle'
+2018-06-12 16:18:45,566 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_recv_handle'
+2018-06-12 16:19:23,767 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_recv_handle'
+2018-06-12 16:19:25,659 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'measure_recv_handle'

@@ -18,7 +18,7 @@ class MeasureDataBean:
     ENCODE_TYPE = "utf-8"
 
     def __init__(self, *, device_category, device_id, temperature):
-        self.usage = "position_data"
+        self.usage = "measure_data"
         self.device_category = device_category
         self.device_id = device_id
         self.temperature = temperature

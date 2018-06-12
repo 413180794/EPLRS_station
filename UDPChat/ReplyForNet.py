@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.append(os.path.abspath("../Bean"))
 sys.path.append(os.path.abspath("../UIPy"))
 print(sys.path)
@@ -7,9 +8,8 @@ import functools
 import struct
 import time
 
-from twisted.internet import reactor,  threads
+from twisted.internet import reactor, threads
 from twisted.internet.protocol import DatagramProtocol
-
 
 from ApplyForNetBean import ApplyForNetBean
 from NetSuccessBean import NetSuccessBean
@@ -25,7 +25,7 @@ from mylogging import logger
 
 class replyForNet(DatagramProtocol):
     def __init__(self):
-        self.ip_lists = "192.168.31.180:mse_t_v_12,192.168.31.41:mse_t_v_11,12.32.32.12:mse_t_v_23"
+        self.ip_lists = "192.168.31.180:mse_t_v_12,192.168.31.40:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23"
 
     def startProtocol(self):
         print("startProtocol")
@@ -40,7 +40,7 @@ class replyForNet(DatagramProtocol):
             function_ = functools.partial(getattr(self, usage + "_handle"), datagram, addr)
             d = threads.deferToThread(function_)
             d.addCallback(self.success_or_failure)
-            d.addErrback(lambda m:print(m))
+            d.addErrback(lambda m: print(m))
         except AttributeError as e:
             logger.error(e)
 

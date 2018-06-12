@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath("../tool"))
 from typeProperty import typed_property
 
 
-class TextSuccessReceive(object):
+class MeasureSuccessReceive(object):
     __slots__ = ['_usage']
     usage = typed_property("usage", str)
     ENCODE_TYPE = "utf-8"
@@ -29,13 +29,13 @@ class TextSuccessReceive(object):
     @property
     def pack_data(self):
         pack_data_ = tuple(
-            map(lambda m: m.encode(TextSuccessReceive.ENCODE_TYPE) if type(m) == str else m, self.all_data)
+            map(lambda m: m.encode(MeasureSuccessReceive.ENCODE_TYPE) if type(m) == str else m, self.all_data)
         )
         return struct.pack(self.format_(), *pack_data_)
 
     @staticmethod
     def unpack_data():
-        bean = TextSuccessReceive()
+        bean = MeasureSuccessReceive()
         return bean
 
     def send(self, __send, addr):
@@ -46,5 +46,5 @@ class TextSuccessReceive(object):
 
 
 if __name__ == '__main__':
-    x = TextSuccessReceive()
+    x = MeasureSuccessReceive()
     print(x)

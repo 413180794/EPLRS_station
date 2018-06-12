@@ -11,7 +11,7 @@ class UDPProtocol(DatagramProtocol):
     def __init__(self, *, MainForm):
         super(UDPProtocol, self).__init__()
         self.MainForm = MainForm
-    
+
     def startProtocol(self):
         logger.info("启动udp")
 
@@ -28,6 +28,25 @@ class UDPProtocol(DatagramProtocol):
         except AttributeError as e:
             logger.error(e)
 
+    def apply_position_handle(self, datagram, addr):
+        '''
+        对方请求自己的位置数据
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.apply_position_data_signal.emit(addr)
+
+    def apply_measure_handle(self, datagram, addr):
+        '''
+        对方请求自己的测量数据
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.apply_measure_data_signal.emit(addr)
+
+
     def net_success_handle(self, datagram, addr):
         # 入网成功
         self.MainForm.reply_for_net_success.emit(datagram)
@@ -36,6 +55,33 @@ class UDPProtocol(DatagramProtocol):
         # 入网失败
         # reply_for_net_failure_obj = ReplyForNetFailureBean.unpack_data(datagram)
         self.MainForm.reply_for_net_failure.emit()
+
+    def position_data_handle(self, datagram, addr):
+        '''
+        收到位置数据
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.not_read_msg_count_signal.emit()
+        self.MainForm.position_data_signal.emit(datagram, addr)
+
+    def measure_data_handle(self, datagram, addr):
+        '''
+        收到测量数据
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.not_read_msg_count_signal.emit()
+        self.MainForm.measure_data_signal.emit(datagram, addr)
+
+    def position_recv_handle(self, datagram, addr):
+
+        self.MainForm.position_recv_signal.emit()
+
+    def measure_recv_handle(self, datagram, addr):
+        self.MainForm.measure_recv_signal.emit()
 
     def connectionRefused(self):
         self.MainForm.connect_refused.emit()
