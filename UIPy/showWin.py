@@ -43,9 +43,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         self.apply = UDPProtocol(MainForm=self)
 
-        self.port = 10001  # 其他节点默认端口
+        self.MYPORT = 10001  # 其他节点默认端口
 
-        reactor.listenUDP(self.port, self.apply)
+        reactor.listenUDP(self.MYPORT, self.apply)
 
         self.init_property()
 
@@ -73,7 +73,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         self.device_id = 0
 
-        self.device_category = "mse_t_r"
+        self.device_category = "eplrs_t_r"
 
         self.device_name = self.device_category + "_" + str(self.device_id)
 
@@ -214,7 +214,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         else:
             bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                    temperature=float(self.temperature_show.text().replace("℃", "")))
-            bean.send(self.apply, (self.other_equip_ip.text(), self.port))
+            bean.send(self.apply, (self.other_equip_ip.text(), self.MYPORT))
             self.send_states_show.setText("未接收")
 
     @pyqtSlot()
@@ -230,7 +230,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             position_y = eval(self.position_show.text())[1]
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
                                     position_x=position_x, position_y=position_y)
-            bean.send(self.apply, (self.other_equip_ip.text(), self.port))
+            bean.send(self.apply, (self.other_equip_ip.text(), self.MYPORT))
             self.send_states_show.setText("未接收")
 
     def closeEvent(self, QCloseEvent):
