@@ -96,7 +96,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.property_save_button.clicked.emit()
 
         ##################定时查看网卡流量,两次只差计算网速###################
-        self.interface = 'enp3s0'  # 网口名称
+        self.interface = 'eth1'  # 网口名称
         self.net_data_num_queue = queue.Queue(1)
         self.get_speed_timer = QTimer(self)
         self.get_speed_timer.timeout.connect(self.on_speed_timer)
@@ -115,10 +115,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_show.setText("(116.23,39.54)")
 
     def on_position_recv_signal(self):
-        self.send_states_show.setText("发送成功")
+        self.send_states_show.setText("位置发送成功")
 
     def on_measure_recv_signal(self):
-        self.send_states_show.setText("发送成功")
+        self.send_states_show.setText("数据发送成功")
 
     @pyqtSlot(int)
     def on_tabWidget_tabBarClicked(self, index):
@@ -186,6 +186,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         net_data_num = get_net_data_num(self.interface)
         if net_data_num is None:
             self.send_rate_show.setText("未连接")
+            if self.interface == "eth1":
+                self.interface = 'wlan0'
+            elif self.interface == "wlan0":
+                self.interface = 'eth1'
         elif self.net_data_num_queue.full():
             old_net_data_num = self.net_data_num_queue.get()
             download_speed = (float(net_data_num) - float(old_net_data_num))
@@ -214,7 +218,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         else:
             bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                    temperature=float(self.temperature_show.text().replace("℃", "")))
-            bean.send(self.apply, (self.other_equip_ip.text(), self.MYPORT))
+            bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             self.send_states_show.setText("未接收")
 
     @pyqtSlot()
@@ -230,7 +234,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             position_y = eval(self.position_show.text())[1]
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
                                     position_x=position_x, position_y=position_y)
-            bean.send(self.apply, (self.other_equip_ip.text(), self.MYPORT))
+            bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             self.send_states_show.setText("未接收")
 
     def closeEvent(self, QCloseEvent):
