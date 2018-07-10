@@ -2,11 +2,11 @@ import struct
 import os
 import sys
 
-from mylogging import logger
 
 sys.path.append(os.path.abspath("../tool"))
 from typeProperty import typed_property
 
+from trans_data import encode_, decode_
 
 class PositionDataBean:
     __slots__ = ['_usage', '_device_category', '_device_id', '_position_x', '_position_y']
@@ -15,68 +15,49 @@ class PositionDataBean:
     device_id = typed_property("device_id", int)
     position_x = typed_property("position_x", float)
     position_y = typed_property("position_y", float)
+    typecode = '<16s16sidd'
 
-    ENCODE_TYPE = "utf-8"
-
-    def __init__(self, *, device_category, device_id, position_x, position_y):
-        self.usage = "position_data"
+    def __init__(self, *, usage='position_data', device_category, device_id, position_x, position_y):
+        self.usage = usage
         self.device_category = device_category
         self.device_id = device_id
-        self.position_x = position_x
-        self.position_y = position_y
+        self.position_x = float(position_x)
+        self.position_y = float(position_y)
 
-    @staticmethod
-    def format_():
-        return "!16s16sidd"
+    def __iter__(self):
+        return (i for i in (self.usage, self.device_category, self.device_id, self.position_x, self.position_y))
 
-    @property
-    def all_data(self):
-        return (
-            self.usage,
-            self.device_category,
-            self.device_id,
-            self.position_x,
-            self.position_y
-        )
-
+    def device_kind(self):
+        return "模拟电台" if self.device_category.split("_")[-1] == "r" else "虚拟电台"
     @property
     def device_name(self):
         return self.device_category + "_" + str(self.device_id)
 
-    @property
-    def pack_data(self):
-        __pack_data_ = tuple(
-            map(lambda m: m.encode(PositionDataBean.ENCODE_TYPE) if type(m) == str else m, self.all_data)
-        )
-        return struct.pack(self.format_(), *__pack_data_)
+    def __bytes__(self, typecode=typecode):
+        bytes_data = [encode_(m) for m in self]
+        return struct.pack(typecode, *bytes_data)
 
-    @staticmethod
-    def unpack_data(pack_data):
-        unpack_data_ = tuple(
-            map(lambda m: m.decode(PositionDataBean.ENCODE_TYPE).strip("\x00") if type(m) == bytes else m,
-                struct.unpack(PositionDataBean.format_(), pack_data))
-        )
-        bean = PositionDataBean(device_category=unpack_data_[1], device_id=unpack_data_[2], position_x=unpack_data_[3],
-                                position_y=unpack_data_[4])
-        return bean
+    @classmethod
+    def frombytes(cls, bytes_data):
+        memv = memoryview(bytes_data)
+        data_para = [decode_(x) for x in struct.unpack(cls.typecode, memv[:].tobytes())]
+        return cls(device_category=data_para[1], device_id=data_para[2], position_x=data_para[3],
+                   position_y=data_para[4])
 
-    def send(self, __send, addr):
+
+    def send(self, _send, addr):
         '''
         使用send 向 addr发送数据
         :param send: protocal
         :param addr: 地址
         :return:
         '''
-        try:
-            __send.send_apply(self.pack_data, addr)
-        except Exception as e:
-            logger.error(e)
+        _send.send_apply(bytes(self), addr)
 
     def __str__(self):
-        return "device_category:" + self.device_category + "_" + str(
-            self.device_id) + " positoin:" + "(" + str(self.position_x) + "," + str(self.position_y) + ")"
+        return str((self.position_x,self.position_y))
 
 
 if __name__ == '__main__':
-    x = PositionDataBean(device_category="sdf", device_id=12, position_x=12, position_y=23)
-    print(x)
+    x = PositionDataBean(device_category="mse_t_v", device_id=12, position_x=12, position_y=23)
+    print(x.device_kind())

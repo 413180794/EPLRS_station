@@ -25,7 +25,7 @@ from mylogging import logger
 
 class replyForNet(DatagramProtocol):
     def __init__(self):
-        self.ip_lists = "192.168.31.180:mse_t_v_12,192.168.31.40:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23"
+        self.ip_lists = "192.168.31.180:mse_t_v_12,192.168.1.10:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23,192.168.31.180:mse_t_v_12,12.32.32.12:mse_t_v_23"
 
     def startProtocol(self):
         print("startProtocol")
@@ -47,18 +47,18 @@ class replyForNet(DatagramProtocol):
     def success_or_failure(self, status_addr):
         if status_addr[0] == "success_net_reply":
             reply_for_net_success_obj = NetSuccessBean(ip_list=self.ip_lists)
+            self.transport.write(bytes(reply_for_net_success_obj),status_addr[1])
 
-            self.transport.write(reply_for_net_success_obj.pack_data, status_addr[1])
         elif status_addr[0] == "failure_net_reply":
 
             reply_for_net_failure_obj = NetFailedBean()
-            self.transport.write(reply_for_net_failure_obj.pack_data, status_addr[1])
 
+            self.transport.write(bytes(reply_for_net_failure_obj),status_addr[1])
     # 对内容校验函数
     def apply_net_handle(self, datagram, addr):
         # 此处的data还没有解码
-        apply_for_net_obj = ApplyForNetBean.unpack_data(datagram)
-        if apply_for_net_obj.is_allow_in():
+        apply_for_net_obj = ApplyForNetBean.frombytes(datagram)
+        if bool(apply_for_net_obj):
             return "success_net_reply", addr
         else:
             return "failure_net_reply", addr

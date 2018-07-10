@@ -2,10 +2,9 @@ import struct
 import os
 import sys
 
-from mylogging import logger
-
 sys.path.append(os.path.abspath("../tool"))
 from typeProperty import typed_property
+from trans_data import encode_, decode_
 
 
 class MeasureDataBean:
@@ -14,64 +13,49 @@ class MeasureDataBean:
     device_category = typed_property("device_category", str)
     device_id = typed_property("device_id", int)
     temperature = typed_property("temperature", float)
+    typecode = '<16s16sid'
 
-    ENCODE_TYPE = "utf-8"
-
-    def __init__(self, *, device_category, device_id, temperature):
-        self.usage = "measure_data"
+    def __init__(self, *, usage="measure_data", device_category, device_id, temperature):
+        self.usage = usage
         self.device_category = device_category
         self.device_id = device_id
         self.temperature = temperature
 
-    @staticmethod
-    def format_():
-        return "!16s16sid"
+    def __iter__(self):
+        return (i for i in (self.usage, self.device_category, self.device_id, self.temperature))
 
-    @property
-    def all_data(self):
-        return (
-            self.usage,
-            self.device_category,
-            self.device_id,
-            self.temperature
-        )
+    def device_kind(self):
+        return "模拟电台" if self.device_category.split("_")[-1] == "r" else "虚拟电台"
 
     @property
     def device_name(self):
         return self.device_category + "_" + str(self.device_id)
 
-    @property
-    def pack_data(self):
-        __pack_data_ = tuple(
-            map(lambda m: m.encode(MeasureDataBean.ENCODE_TYPE) if type(m) == str else m, self.all_data)
-        )
-        return struct.pack(self.format_(), *__pack_data_)
+    def __bytes__(self, typecode=typecode):
+        bytes_data = [encode_(m) for m in self]
+        return struct.pack(typecode, *bytes_data)
 
-    @staticmethod
-    def unpack_data(pack_data):
-        unpack_data_ = tuple(
-            map(lambda m: m.decode(MeasureDataBean.ENCODE_TYPE).strip("\x00") if type(m) == bytes else m,
-                struct.unpack(MeasureDataBean.format_(), pack_data))
-        )
-        bean = MeasureDataBean(device_category=unpack_data_[1], device_id=unpack_data_[2], temperature=unpack_data_[3])
-        return bean
+    @classmethod
+    def frombytes(cls, bytes_data):
+        memv = memoryview(bytes_data)
+        bytes_data = [decode_(x) for x in struct.unpack(cls.typecode, memv[:].tobytes())]
+        return cls(device_category=bytes_data[1], device_id=bytes_data[2], temperature=bytes_data[3])
 
-    def send(self, __send, addr):
+    def send(self, _send, addr):
         '''
         使用send 向 addr发送数据
         :param send: protocal
         :param addr: 地址
         :return:
         '''
-        try:
-            __send.send_apply(self.pack_data, addr)
-        except Exception as e:
-            logger.error(e)
+
+        _send.send_apply(bytes(self), addr)
+
 
     def __str__(self):
-        return str(self.all_data)
+        return str(self.temperature)
 
 
 if __name__ == '__main__':
-    x = MeasureDataBean(device_category="123",device_id=123,temperature=123.2)
-    print(x)
+    x = MeasureDataBean(device_category="123", device_id=123, temperature=123.2)
+    print(bytes(x))

@@ -4,6 +4,7 @@ import os
 import queue
 import socket
 import sys
+from datetime import datetime
 
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
@@ -30,8 +31,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
     not_read_msg_count_signal = pyqtSignal()  # 未读消息计数信号
     position_data_signal = pyqtSignal(bytes, tuple)  # 收到位置数据
     measure_data_signal = pyqtSignal(bytes, tuple)  # 收到测量数据
-    apply_position_data_signal = pyqtSignal(tuple)
-    apply_measure_data_signal = pyqtSignal(tuple)
 
     position_recv_signal = pyqtSignal()
     measure_recv_signal = pyqtSignal()
@@ -40,28 +39,18 @@ class MainForm(QMainWindow, Ui_MainWindow):
         super(MainForm, self).__init__()
         self.setupUi(self)
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
-
         self.apply = UDPProtocol(MainForm=self)
-
         self.MYPORT = 10001  # 其他节点默认端口
-
         reactor.listenUDP(self.MYPORT, self.apply)
-
         self.init_property()
-
         self.send_rate_dial.valueChanged.connect(self.send_rate_dial_valueChanged)  # 奇怪，使用装饰器绑定不到，是库的bug么
-
         self.send_rate_spinbox.valueChanged.connect(self.send_rate_spinbox_valueChanged)
-
         self.reply_for_net_success.connect(self.on_reply_for_net_success)
 
         self.reply_for_net_failure.connect(self.on_reply_for_net_failure)
 
         self.position_data_signal.connect(self.on_position_data_signal)
 
-        self.apply_position_data_signal.connect(self.on_apply_position_data_signal)
-
-        self.apply_measure_data_signal.connect(self.on_apply_measure_data_signal)
 
         self.measure_data_signal.connect(self.on_measure_data_signal)
 
@@ -78,16 +67,17 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.device_name = self.device_category + "_" + str(self.device_id)
 
         self.device_ip = self.get_host_ip()
-
-        self.ip_id_table.setHorizontalHeaderLabels(["设备ID", "设备IP"])
+        self.measure_data_path = os.path.join("..","dataLog","measure_data.txt")
+        self.position_data_path = os.path.join("..","dataLog","position_data.txt")
+        self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
 
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        self.position_table.setHorizontalHeaderLabels(["设备ID", "设备IP", "经度", "维度"])
+        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "维度"])
 
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        self.measure_table.setHorizontalHeaderLabels(['设备ID', '设备IP', '测量数据'])
+        self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '测量数据'])
 
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -114,6 +104,15 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # ---------------------------显示经纬度(38.00,23.00)-----------------------------#
         self.position_show.setText("(116.23,39.54)")
 
+    @pyqtSlot(str)
+    def on_search_edit_textEdited(self, text):
+        allList = self.ip_id_table.findItems("", Qt.MatchContains)
+        for x in allList:
+            self.ip_id_table.setRowHidden(x.row(), True)
+        qList = self.ip_id_table.findItems(text, Qt.MatchContains)
+        for x in qList:
+            self.ip_id_table.setRowHidden(x.row(), False)
+
     def on_position_recv_signal(self):
         self.send_states_show.setText("位置发送成功")
 
@@ -123,21 +122,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
     @pyqtSlot(int)
     def on_tabWidget_tabBarClicked(self, index):
         if 1 <= index <= 2:
+            self.not_read_msg_count = 0
             self.not_read_count_label.setText("0")
-
-    def on_apply_position_data_signal(self, addr):
-        position = eval(self.position_show.text())
-        position_data_bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
-                                              position_x=position[0], position_y=position[1])
-        print(position_data_bean)
-        position_data_bean.send(self.apply, addr)
-
-    def on_apply_measure_data_signal(self, addr):
-        measure_data_bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
-                                            temperature=float(self.temperature_show.text().replace("℃","")))
-        print(measure_data_bean)
-        measure_data_bean.send(self.apply,addr)
-
 
     def on_position_data_signal(self, datagram: bytes, addr: tuple):
         '''
@@ -146,11 +132,23 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :param add:
         :return:
         '''
-        position_bean = PositionDataBean.unpack_data(datagram)
-        position_recv_bean = PositionSuccessReceive.unpack_data()
+        position_bean = PositionDataBean.frombytes(datagram)
+        # 记录收到位置数据
+        with open(self.position_data_path,'a',encoding='utf-8') as f:
+            f.write("receive position_data-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
+                time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                other_name=position_bean.device_name,
+                other_ip=str(addr[0]),
+                self_name=self.device_name,
+                self_ip=self.get_host_ip(),
+                content=position_bean
+            )
+            )
+        position_recv_bean = PositionSuccessReceive.frombytes()
         self.position_table.insertRow(self.position_table.rowCount())
         table_item = [QTableWidgetItem(x) for x in
-                      [position_bean.device_category + "_" + str(position_bean.device_id), addr[0],
+                      [position_bean.device_kind(), position_bean.device_category + "_" + str(position_bean.device_id),
+                       addr[0],
                        str(position_bean.position_x),
                        str(position_bean.position_y)]]
         for y in range(self.position_table.columnCount()):
@@ -166,11 +164,23 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :param addr:
         :return:
         '''
-        measure_bean = MeasureDataBean.unpack_data(datagram)
-        measure_recv_bean = MeasureSuccessReceive.unpack_data()
+        measure_bean = MeasureDataBean.frombytes(datagram)
+        # 记录收到的测量数据
+        with open(self.measure_data_path,'a',encoding='utf-8') as f:
+            f.write("receive txt-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
+                time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                other_name=measure_bean.device_name,
+                other_ip=str(addr[0]),
+                self_name=self.device_name,
+                self_ip=self.get_host_ip(),
+                content=measure_bean
+            )
+            )
+        measure_recv_bean = MeasureSuccessReceive.frombytes()
         self.measure_table.insertRow(self.measure_table.rowCount())
         table_item = [QTableWidgetItem(x) for x in
-                      [measure_bean.device_category + "_" + str(measure_bean.device_id), addr[0],
+                      [measure_bean.device_kind(), measure_bean.device_category + "_" + str(measure_bean.device_id),
+                       addr[0],
                        str(measure_bean.temperature)]]
         for y in range(self.measure_table.columnCount()):
             table_item[y].setTextAlignment(Qt.AlignCenter)
@@ -202,9 +212,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         树莓派中获取cpu温度
         :return:
         '''
-        tempFile = open("/sys/class/thermal/thermal_zone0/temp")
-        cpu_temp = tempFile.read()
-        tempFile.close()
+        try:
+            tempFile = open("/sys/class/thermal/thermal_zone0/temp")
+            cpu_temp = tempFile.read()
+        except:
+            cpu_temp = 0
+        else:
+            tempFile.close()
         self.temperature_show.setText(str(float(cpu_temp) / 1000) + "℃")
 
     @pyqtSlot()
@@ -216,9 +230,25 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "" or self.other_equip_ip.text() == "未连接":
             QMessageBox.critical(self, "失败", "请选择报告的对象")
         else:
+            _temperature = self.temperature_show.text()
+            if _temperature =="":
+                self.send_states_show.setText("未接收")
+                return
             bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                    temperature=float(self.temperature_show.text().replace("℃", "")))
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
+            # 记录发送的测量数据
+            with open(self.measure_data_path,'a',encoding='utf-8') as f:
+                f.write(
+                    "send measure_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
+                        time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                        self_name=self.device_name,
+                        self_ip=self.get_host_ip(),
+                        other_name=self.other_equip_id.text(),
+                        other_ip=self.other_equip_ip.text(),
+                        content=bean
+                    )
+                )
             self.send_states_show.setText("未接收")
 
     @pyqtSlot()
@@ -235,6 +265,18 @@ class MainForm(QMainWindow, Ui_MainWindow):
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
                                     position_x=position_x, position_y=position_y)
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
+            # 记录发送的位置数据
+            with open(self.position_data_path,'a',encoding='utf-8') as f:
+                f.write(
+                    "send   position_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
+                        time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                        self_name=self.device_name,
+                        self_ip=self.get_host_ip(),
+                        other_name=self.other_equip_id.text(),
+                        other_ip=self.other_equip_ip.text(),
+                        content=bean
+                    )
+                )
             self.send_states_show.setText("未接收")
 
     def closeEvent(self, QCloseEvent):
@@ -264,8 +306,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :param colmn:
         :return:
         '''
-        device_ip = self.ip_id_table.item(row, 1).text()  # 获得该行中的ip地址
-        device_id = self.ip_id_table.item(row, 0).text()  # 获得该行中的i
+        device_ip = self.ip_id_table.item(row, 2).text()  # 获得该行中的ip地址
+        device_id = self.ip_id_table.item(row, 1).text()  # 获得该行中的i
         self.other_equip_id.setText(device_id)
         self.other_equip_ip.setText(device_ip)
 
@@ -283,7 +325,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
             ip_item = QTableWidgetItem(ip)
             id_item.setTextAlignment(Qt.AlignCenter)
             ip_item.setTextAlignment(Qt.AlignCenter)
-            yield [id_item, ip_item]
+            if "r" == id.split("_")[-2]:
+                kind = "模拟电台"
+            else:
+                kind = "虚拟电台"
+            kind_item = QTableWidgetItem(kind)
+            kind_item.setTextAlignment(Qt.AlignCenter)
+            yield [kind_item, id_item, ip_item]
 
     def insert_data_to_ip_id_table(self, data):
         '''
@@ -311,13 +359,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :param ip_comma_interval:
         :return:
         '''
-        reply_for_net_success_obj = NetSuccessBean.unpack_data(datagram)
+        reply_for_net_success_obj = NetSuccessBean.frombytes(datagram)
         ip_comma_interval = reply_for_net_success_obj.ip_list
-        self.clear_table_data()
         for data in self.ip_id_list_to_many_one_line(ip_comma_interval):
             self.insert_data_to_ip_id_table(data)
         self.if_connected_main.setText("成功入网")
-        QMessageBox.about(self, "入网成功", "入网成功")
+        # QMessageBox.about(self, "入网成功", "入网成功")
 
     def on_reply_for_net_failure(self):
         '''
@@ -407,6 +454,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             device_category=self.device_category
         )
         apply_for_net_obj.send(self.apply, self.god_node_addr)
+        self.clear_table_data()
         # self.apply.send_apply(apply_for_net_obj.pack_data, ("127.0.0.1", 10000))
         # 这里搞成applyforobj自己的属性。他可以实现自己发送 发送文本
 
@@ -420,12 +468,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.send_text_button
 
     def get_host_ip(self):
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(('8.8.8.8', 80))
             ip = s.getsockname()[0]
         except Exception as e:
             logger.error(e)
+            return '0.0.0.0'
         finally:
             s.close()
         return ip

@@ -1,85 +1,82 @@
 import struct
 import os
 import sys
+
 sys.path.append(os.path.abspath("../tool"))
+
 from typeProperty import typed_property
+from trans_data import decode_, encode_
 
 
-class ApplyForNetBean(object):
+class ApplyForNetBean:
     __slots__ = ['_usage', '_device_category', '_width_band', '_interval',
                  '_routing_parameter', "_device_id"]
     usage = typed_property("usage", str)
-    device_category_ = typed_property("device_category", str)
+    device_category = typed_property("device_category", str)
     width_band = typed_property("width_band", int)
     interval = typed_property("interval", int)
     routing_parameter = typed_property("routing_parameter", str)
     device_id = typed_property("device_id", int)
-    ENCODE_TYPE = "utf-8"
+    typecode = "<16s16sii16si"
 
-    def __init__(self, *, device_category, width_band, interval, routing_parameter, device_id):
-        self.usage = "apply_net"
-        self.device_category_ = device_category
+    def __init__(self, *, usage='apply_net', device_category, width_band, interval, routing_parameter, device_id):
+        self.usage = usage
+
+        self.device_category = device_category
         self.device_id = device_id
         self.width_band = width_band
         self.interval = interval
         self.routing_parameter = routing_parameter
 
-    @staticmethod
-    def format_():
-        return "!16s16sii16si"
-
-    @property
-    def all_data(self):
+    def __iter__(self):
         return (
-            self.usage,
-            self.device_category_,
-            self.width_band,
-            self.interval,
-            self.routing_parameter,
-            self.device_id,
+            i for i in (self.usage,
+                        self.device_category,
+                        self.width_band,
+                        self.interval,
+                        self.routing_parameter,
+                        self.device_id
+                        )
         )
 
-    @property
-    def pack_data(self):
-        pack_data_ = tuple(
-            map(lambda m: m.encode(ApplyForNetBean.ENCODE_TYPE) if type(m) == str else m, self.all_data)
-        )
-        return struct.pack(self.format_(), *pack_data_)
+    def __repr__(self):
+        classs_name = type(self).__name__
+        return "{}(usage={!r},device_category={!r},width_band={!r},interval={!r},routing_parameter={!r},device_id={!r})".format(
+            classs_name, *self)
 
-    @staticmethod
-    def unpack_data(pack_data):
-        unpack_data_ = tuple(
-            map(lambda m: m.decode(ApplyForNetBean.ENCODE_TYPE).strip("\x00") if type(m) == bytes else m,
-                struct.unpack(ApplyForNetBean.format_(), pack_data))
-        )
+    def __eq__(self, other):
+        return tuple(self) == tuple(other)
 
-        bean = ApplyForNetBean(width_band=unpack_data_[2], interval=unpack_data_[3],
-                               routing_parameter=unpack_data_[4], device_id=unpack_data_[5],
-                               device_category=unpack_data_[1])
+    def __str__(self):
+        return str(tuple(self))
 
-        return bean
+    def __bytes__(self, typecode=typecode):
+        bytes_data = [encode_(m) for m in self]
+        return struct.pack(typecode, *bytes_data)
 
-    def send(self, send, addr):
-        '''
+    @classmethod
+    def frombytes(cls, bytes_data):
+        memv = memoryview(bytes_data)
+        data_para = [decode_(x) for x in struct.unpack(cls.typecode, memv[:].tobytes())]
+        print(data_para)
+        return cls(device_category=data_para[1], width_band=data_para[2], interval=data_para[3],
+                   routing_parameter=data_para[4],
+                   device_id=data_para[5])
 
-        :param send: protocal
-        :param addr: 地址
-        :return:
-        '''
-        send.send_apply(self.pack_data, addr)
+    def send(self, __send, addr):
+        __send.send_apply(bytes(self), addr)
 
-    def is_allow_in(self):
-        '''
-
-        :return: 看一下self.width_band == 1 2 4 8 self.interval 625 25
-        '''
-        if self.width_band in [1, 2, 4, 8] and self.interval in [25, 625] and self.routing_parameter in [
-            "OSPF协议", ]:
+    def __bool__(self):
+        if self.width_band in [1, 2, 4, 8] and self.interval in [25, 625] and self.routing_parameter in ["OSPF协议", ]:
             return True
         else:
-            print(12)
             return False
 
 
 if __name__ == '__main__':
-    print(123)
+    x = ApplyForNetBean(device_category='asd', width_band=123, interval=123, routing_parameter='123', device_id=12)
+    # print(repr(x))
+    # print(eval(repr(x)))
+    # print(bytes(x))
+    print(ApplyForNetBean.frombytes(bytes(x)))
+    # print(bytes(2))

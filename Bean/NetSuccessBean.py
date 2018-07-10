@@ -1,45 +1,41 @@
 import struct
+# 11
 import os
 import sys
+
+
 sys.path.append(os.path.abspath("../tool"))
 from typeProperty import typed_property
+from trans_data import encode_, decode_
 
 
 class NetSuccessBean(object):
     __slots__ = ['_usage', '_ip_list']
     usage = typed_property("usage", str)
     ip_list = typed_property("ip_list", str)
-    ENCODE_TYPE = "utf-8"
+    typecode = '<16s1024s'
 
     def __init__(self, *, ip_list):
         self.usage = "net_success"
         self.ip_list = ip_list
 
-    @staticmethod
-    def format_():
-        return "!16s2048s"
+    def __iter__(self):
+        return (i for i in (self.usage, self.ip_list))
 
-    @property
-    def all_data(self):
-        return (
-            self.usage,
-            self.ip_list
-        )
+    def __bytes__(self,typecode=typecode):
+        bytes_data = [encode_(m) for m in self]
+        return struct.pack(typecode,*bytes_data)
 
-    @property
-    def pack_data(self):
-        __pack_data = tuple(
-            map(lambda m: m.encode(NetSuccessBean.ENCODE_TYPE) if type(m) == str else m, self.all_data)
-        )
-        print(__pack_data)
-        # dprint(struct.pack(ReplyForNetSuccessBean.format_(),pack_data_))
-        return struct.pack(NetSuccessBean.format_(), *__pack_data)
-
-    @staticmethod
-    def unpack_data(pack_data):
-        unpack_data_ = tuple(
-            map(lambda m: m.decode(NetSuccessBean.ENCODE_TYPE).strip("\x00") if type(m) == bytes else m,
-                struct.unpack(NetSuccessBean.format_(), pack_data))
-        )
-        bean = NetSuccessBean(ip_list=unpack_data_[1])
-        return bean
+    @classmethod
+    def frombytes(cls,bytes_data):
+        memv = memoryview(bytes_data)
+        bytes_data = [decode_(x) for x in struct.unpack(cls.typecode,memv[:].tobytes())]
+        return cls(ip_list=bytes_data[1])
+    def send(self, _send, addr):
+        '''
+        使用send 向 addr发送数据
+        :param send: protocal
+        :param addr: 地址
+        :return:
+        '''
+        _send.send_apply(bytes(self), addr)

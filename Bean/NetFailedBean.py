@@ -4,39 +4,32 @@ import sys
 
 sys.path.append(os.path.abspath("../tool"))
 from typeProperty import typed_property
+from trans_data import encode_
 
 
 class NetFailedBean(object):
     __slots__ = ['_usage']
     usage = typed_property("usage", str)
-    ENCODE_TYPE = "utf-8"
+    typecode = "<16s"
 
-    def __init__(self):
-        self.usage = "net_failed"
+    def __init__(self, usage='net_failed'):
+        self.usage = usage
 
-    @staticmethod
-    def format_():
-        return "!16s"
+    def __iter__(self):
+        return (i for i in (self.usage,))
 
-    @property
-    def all_data(self):
-        return (
-            self.usage,
-        )
+    def __bytes__(self, typecode=typecode):
+        bytes_data = [encode_(m) for m in self]
+        return struct.pack(typecode, *bytes_data)
 
-    @property
-    def pack_data(self):
-        __pack_data = tuple(
-            map(lambda m: m.encode(NetFailedBean.ENCODE_TYPE) if type(m) == str else m, self.all_data)
-        )
-        print(__pack_data)
-        return struct.pack(self.format_(), *__pack_data)
-
-    @staticmethod
-    def unpack_data(pack_data):
-        # unpack_data_ = tuple(
-        #     map(lambda m: m.decode(ReplyForNetFailureBean.ENCODE_TYPE).strip("\x00"),
-        #         struct.unpack(ReplyForNetFailureBean.format_(), pack_data))
-        # )
-        bean = NetFailedBean()
-        return bean
+    @classmethod
+    def frombytes(cls):
+        return cls()
+    def send(self, _send, addr):
+        '''
+        使用send 向 addr发送数据
+        :param send: protocal
+        :param addr: 地址
+        :return:
+        '''
+        _send.send_apply(bytes(self), addr)
