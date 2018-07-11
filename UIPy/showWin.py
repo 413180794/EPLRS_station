@@ -22,7 +22,12 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from property import Property
-from cat_net import convert_bytes_to_string, get_net_data_num
+from systemCheck import getCPUtemperature, getSystemInfo, getCPUuse, getRAMinfo, getDiskSpace, getVoiceCardStatus, \
+    getEthernetAdapterStatus
+from cat_net import get_net_data_num, convert_bytes_to_string
+from systemInfoDialog import SystemInfoDialog
+from ClearSuccessBean import ClearSuccessBean
+from ClearDeviceBean import ClearDeviceBean
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
@@ -31,7 +36,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
     not_read_msg_count_signal = pyqtSignal()  # 未读消息计数信号
     position_data_signal = pyqtSignal(bytes, tuple)  # 收到位置数据
     measure_data_signal = pyqtSignal(bytes, tuple)  # 收到测量数据
-
+    clear_device_signal = pyqtSignal(tuple)
+    clear_success_signal = pyqtSignal()
     position_recv_signal = pyqtSignal()
     measure_recv_signal = pyqtSignal()
 
@@ -46,45 +52,28 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.send_rate_dial.valueChanged.connect(self.send_rate_dial_valueChanged)  # 奇怪，使用装饰器绑定不到，是库的bug么
         self.send_rate_spinbox.valueChanged.connect(self.send_rate_spinbox_valueChanged)
         self.reply_for_net_success.connect(self.on_reply_for_net_success)
-
         self.reply_for_net_failure.connect(self.on_reply_for_net_failure)
-
         self.position_data_signal.connect(self.on_position_data_signal)
-
-
         self.measure_data_signal.connect(self.on_measure_data_signal)
-
         self.position_recv_signal.connect(self.on_position_recv_signal)
-
         self.measure_recv_signal.connect(self.on_measure_recv_signal)
-
         self.not_read_msg_count_signal.connect(self.on_not_read_msg_count_signal)
-
         self.device_id = 0
-
         self.device_category = "eplrs_t_r"
-
         self.device_name = self.device_category + "_" + str(self.device_id)
-
         self.device_ip = self.get_host_ip()
-        self.measure_data_path = os.path.join("..","dataLog","measure_data.txt")
-        self.position_data_path = os.path.join("..","dataLog","position_data.txt")
+        self.measure_data_path = os.path.join("..", "dataLog", "measure_data.txt")
+        self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
-
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "维度"])
-
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '测量数据'])
-
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         self.god_node_addr = ('127.0.0.1', 10000)  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
         self.property_save_button.clicked.emit()
-
+        self.system_info_dlg = SystemInfoDialog(self)
         ##################定时查看网卡流量,两次只差计算网速###################
         self.interface = 'eth1'  # 网口名称
         self.net_data_num_queue = queue.Queue(1)
@@ -103,6 +92,68 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.get_temperature_timer.start()
         # ---------------------------显示经纬度(38.00,23.00)-----------------------------#
         self.position_show.setText("(116.23,39.54)")
+        # 需要删除的对象
+        self.clear_success_signal.connect(self.on_clear_success_signal)
+        self.clear_device_signal.connect(self.on_clear_device_signal)
+        self.saveImage_path = os.path.join('..', 'saveImage')
+        self.saveImage2_path = os.path.join('..', 'saveImage2')
+        self.saveAudio_path = os.path.join('..', 'saveAudio')
+        self.dataLog_path = os.path.join('..', 'dataLog')
+
+    def on_clear_success_signal(self):
+        QMessageBox.critical(self, "结果", "清除成功")
+
+    def on_clear_device_signal(self, addr):
+        '''
+        清除参数命令
+        :return:
+        '''
+        try:
+            # shutil.rmtree(self.dataLog_path)
+            # shutil.rmtree(self.saveImage2_path)
+            # shutil.rmtree(self.saveImage_path)
+            # shutil.rmtree(self.saveAudio_path)
+            print("清除成功")
+        except FileNotFoundError as e:
+            print(e)
+        else:
+            reply = ClearSuccessBean()
+            reply.send(self.apply, addr)
+
+    @pyqtSlot()
+    def on_clear_device_button_clicked(self):
+        # 向选中设备发送清除参数命令
+        if self.other_equip_ip.text() == "":
+            QMessageBox.critical(self, "失败", "请选择对话的对象")
+        else:
+            reply = QMessageBox.question(self, "参数清除", "是否确认清除" + str(self.other_equip_id.text()) + "设备的参数",
+                                         QMessageBox.Yes | QMessageBox.No)
+            if reply == QMessageBox.No:
+                return
+            elif reply == QMessageBox.Yes:
+                clear_msg = ClearDeviceBean()
+                print(self.other_equip_ip.text())
+                clear_msg.send(self.apply, (self.other_equip_ip.text(), self.MYPORT))
+
+    @pyqtSlot()
+    def on_system_check_button_clicked(self):
+        '''
+        获取自检参数
+        :return:
+        '''
+
+        self.system_info_dlg.system_info_label.setText(getSystemInfo())
+        self.system_info_dlg.cpu_tempe_label.setText(getCPUtemperature())
+        self.system_info_dlg.cpu_used_label.setText(getCPUuse())
+        self.system_info_dlg.ram_total_label.setText(getRAMinfo("total"))
+        self.system_info_dlg.ram_used_label.setText(getRAMinfo("used"))
+        self.system_info_dlg.disk_total_label.setText(getDiskSpace("total"))
+        self.system_info_dlg.disk_used_label.setText(getDiskSpace("percentage"))
+        self.system_info_dlg.voice_card_status_label.setText("正常" if getVoiceCardStatus() is True else "停用")
+        self.system_info_dlg.net_card_status_label.setText("正常" if getEthernetAdapterStatus() is True else "停用")
+        self.system_info_dlg.show()
+        self.system_info_dlg.raise_()
+        self.system_info_dlg.activateWindow()
 
     @pyqtSlot(str)
     def on_search_edit_textEdited(self, text):
@@ -134,15 +185,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
         '''
         position_bean = PositionDataBean.frombytes(datagram)
         # 记录收到位置数据
-        with open(self.position_data_path,'a',encoding='utf-8') as f:
-            f.write("receive position_data-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
-                time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                other_name=position_bean.device_name,
-                other_ip=str(addr[0]),
-                self_name=self.device_name,
-                self_ip=self.get_host_ip(),
-                content=position_bean
-            )
+        with open(self.position_data_path, 'a', encoding='utf-8') as f:
+            f.write(
+                "receive position_data-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
+                    time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    other_name=position_bean.device_name,
+                    other_ip=str(addr[0]),
+                    self_name=self.device_name,
+                    self_ip=self.get_host_ip(),
+                    content=position_bean
+                )
             )
         position_recv_bean = PositionSuccessReceive.frombytes()
         self.position_table.insertRow(self.position_table.rowCount())
@@ -166,7 +218,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         '''
         measure_bean = MeasureDataBean.frombytes(datagram)
         # 记录收到的测量数据
-        with open(self.measure_data_path,'a',encoding='utf-8') as f:
+        with open(self.measure_data_path, 'a', encoding='utf-8') as f:
             f.write("receive txt-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
                 time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 other_name=measure_bean.device_name,
@@ -212,14 +264,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         树莓派中获取cpu温度
         :return:
         '''
-        try:
-            tempFile = open("/sys/class/thermal/thermal_zone0/temp")
-            cpu_temp = tempFile.read()
-        except:
-            cpu_temp = 0
-        else:
-            tempFile.close()
-        self.temperature_show.setText(str(float(cpu_temp) / 1000) + "℃")
+
+        self.temperature_show.setText(getCPUtemperature())
 
     @pyqtSlot()
     def on_send_measure_button_clicked(self):
@@ -231,14 +277,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "失败", "请选择报告的对象")
         else:
             _temperature = self.temperature_show.text()
-            if _temperature =="":
+            if _temperature == "":
                 self.send_states_show.setText("未接收")
                 return
             bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                    temperature=float(self.temperature_show.text().replace("℃", "")))
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             # 记录发送的测量数据
-            with open(self.measure_data_path,'a',encoding='utf-8') as f:
+            with open(self.measure_data_path, 'a', encoding='utf-8') as f:
                 f.write(
                     "send measure_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
                         time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -266,7 +312,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                                     position_x=position_x, position_y=position_y)
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             # 记录发送的位置数据
-            with open(self.position_data_path,'a',encoding='utf-8') as f:
+            with open(self.position_data_path, 'a', encoding='utf-8') as f:
                 f.write(
                     "send   position_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
                         time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -424,7 +470,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.save_property_json(property_json)
         self.send_property(property_json)
 
-        # self.tabWidget.setCurrentWidget(self.MainWindow_tab)
+        self.tabWidget.setCurrentWidget(self.MainWindow_tab)
         # 数据的顺序以此是width_band,interval,schedule,routing_parameters,type,ip_id_list.入网申请的时候ip_id_list为空
         # 也就只给ip_id_list分配了一个字节
 

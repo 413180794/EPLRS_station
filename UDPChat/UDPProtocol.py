@@ -46,6 +46,17 @@ class UDPProtocol(DatagramProtocol):
         '''
         self.MainForm.apply_measure_data_signal.emit(addr)
 
+    def clear_device_handle(self, datagram, addr):
+        '''
+        发送而来的清理参数命令
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.clear_device_signal.emit(addr)
+
+    def clear_success_handle(self, datagram, addr):
+        self.MainForm.clear_success_signal.emit()
 
     def net_success_handle(self, datagram, addr):
         # 入网成功

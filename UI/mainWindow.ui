@@ -130,7 +130,7 @@
          <item>
           <widget class="QLabel" name="if_connected_main">
            <property name="text">
-            <string>未连接</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -154,7 +154,7 @@
          <item>
           <widget class="QLabel" name="other_equip_id">
            <property name="text">
-            <string>未连接</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -178,7 +178,7 @@
          <item>
           <widget class="QLabel" name="other_equip_ip">
            <property name="text">
-            <string>未连接</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -352,7 +352,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="reset_system_button">
+        <widget class="QPushButton" name="clear_device_button">
          <property name="text">
           <string>参数清除</string>
          </property>
