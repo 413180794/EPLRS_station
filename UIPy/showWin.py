@@ -95,9 +95,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # 需要删除的对象
         self.clear_success_signal.connect(self.on_clear_success_signal)
         self.clear_device_signal.connect(self.on_clear_device_signal)
-        self.saveImage_path = os.path.join('..', 'saveImage')
-        self.saveImage2_path = os.path.join('..', 'saveImage2')
-        self.saveAudio_path = os.path.join('..', 'saveAudio')
+        # self.saveImage_path = os.path.join('..', 'saveImage')
+        # self.saveImage2_path = os.path.join('..', 'saveImage2')
+        # self.saveAudio_path = os.path.join('..', 'saveAudio')
         self.dataLog_path = os.path.join('..', 'dataLog')
 
     def on_clear_success_signal(self):
