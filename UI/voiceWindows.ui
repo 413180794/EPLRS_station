@@ -40,7 +40,7 @@
         <item>
          <widget class="QLabel" name="status_label">
           <property name="text">
-           <string>正在拨号</string>
+           <string>等待拨号</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -64,7 +64,7 @@
         <item>
          <widget class="QLabel" name="device_ip_label">
           <property name="text">
-           <string>正在拨号</string>
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -88,7 +88,7 @@
         <item>
          <widget class="QLabel" name="device_name_label">
           <property name="text">
-           <string>正在拨号</string>
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
