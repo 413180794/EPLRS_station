@@ -2,6 +2,7 @@
 import json
 import os
 import queue
+import shutil
 import socket
 import sys
 from datetime import datetime
@@ -106,7 +107,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.saveImage2_path = os.path.join('..', 'saveImage2')
         # self.saveAudio_path = os.path.join('..', 'saveAudio')
         self.dataLog_path = os.path.join('..', 'dataLog')
-
+        self.property_path = os.path.join('property.json')
     def on_clear_success_signal(self):
         QMessageBox.critical(self, "结果", "清除成功")
 
@@ -154,12 +155,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
             # shutil.rmtree(self.saveImage2_path)
             # shutil.rmtree(self.saveImage_path)
             # shutil.rmtree(self.saveAudio_path)
+            os.remove(self.property_path)
             print("清除成功")
         except FileNotFoundError as e:
             print(e)
         else:
             reply = ClearSuccessBean()
             reply.send(self.apply, addr)
+            self.close()
 
     @pyqtSlot()
     def on_clear_device_button_clicked(self):
@@ -490,17 +493,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if os.path.exists("property.json"):
             with open("property.json", "r") as f:
                 property_json = json.load(f)
-                property_obj = Property(
-                    width_band=property_json.get("width_band"),
-                    interval=property_json.get("interval"),
-                    routing_parameters=property_json.get("routing_parameters")
-                )
-            for name in property_obj.__slots__:
-                # 一行代替以下所有的代码，getattr(self,name+"_combox") == self.xxx_combox
-                # getattr(getattr(self,name+"_combox),"setCurrentText) == self.xxx_combox.setCurrent
-                # getattr(self.property_obj,name) == property_obj.xxxx
-                getattr(getattr(self, name + "_combox"), "setCurrentText")(getattr(property_obj, name))
-
+                assert type(property_json) == dict
+            for key,name in property_json.items():
+                getattr(getattr(self, key + "_combox"), "setCurrentText")(name)
+        else:
+            raise Exception
     @pyqtSlot()
     def on_property_save_button_clicked(self):
         '''
