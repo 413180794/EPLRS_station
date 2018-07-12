@@ -106,7 +106,7 @@
          <item>
           <widget class="QLabel" name="temperature_show">
            <property name="text">
-            <string/>
+            <string>0℃</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>

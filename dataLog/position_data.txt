@@ -33,3 +33,5 @@ send   position_data-->[2018-07-10 17:03:48]:eplrs_t_r_0(192.168.1.3)-->mse_t_v_
 receive position_data-->[2018-07-10 17:03:48]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.3):   (116.23, 39.54)
 send   position_data-->[2018-07-10 17:03:48]:eplrs_t_r_0(192.168.1.3)-->mse_t_v_23(127.0.0.1):   (116.23, 39.54)
 receive position_data-->[2018-07-10 17:03:48]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.3):   (116.23, 39.54)
+EPLRS_NCS apply send position_data-->[2018-07-12 10:40:56]:eplrs_t_r_0(192.168.1.6)-->EPLRS_NCS(127.0.0.1):   (116.23, 39.54)
+receive position_data-->[2018-07-12 10:40:56]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   (116.23, 39.54)

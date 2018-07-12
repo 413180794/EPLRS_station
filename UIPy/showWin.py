@@ -6,6 +6,9 @@ import socket
 import sys
 from datetime import datetime
 
+from ApplyMeasure import ApplyMeasure
+from ApplyPosition import ApplyPosition
+
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
 sys.path.append(os.path.abspath("../UDPChat"))
@@ -40,6 +43,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
     clear_success_signal = pyqtSignal()
     position_recv_signal = pyqtSignal()
     measure_recv_signal = pyqtSignal()
+    apply_position_data_signal = pyqtSignal(tuple)
+    apply_measure_data_signal = pyqtSignal(tuple)
 
     def __init__(self):
         super(MainForm, self).__init__()
@@ -58,6 +63,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_recv_signal.connect(self.on_position_recv_signal)
         self.measure_recv_signal.connect(self.on_measure_recv_signal)
         self.not_read_msg_count_signal.connect(self.on_not_read_msg_count_signal)
+        self.apply_measure_data_signal.connect(self.on_apply_measure_data_signal)
+        self.apply_position_data_signal.connect(self.on_apply_position_data_signal)
         self.device_id = 0
         self.device_category = "eplrs_t_r"
         self.device_name = self.device_category + "_" + str(self.device_id)
@@ -66,9 +73,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "维度"])
+        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '测量数据'])
+        self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.god_node_addr = ('127.0.0.1', 10000)  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
@@ -103,6 +110,40 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def on_clear_success_signal(self):
         QMessageBox.critical(self, "结果", "清除成功")
 
+    def on_apply_position_data_signal(self,addr):
+        position_x = eval(self.position_show.text())[0]
+        position_y = eval(self.position_show.text())[1]
+        bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
+                                position_x=position_x, position_y=position_y)
+        bean.send(self.apply, addr)
+        # 记录发送的位置数据
+        with open(self.position_data_path, 'a', encoding='utf-8') as f:
+            f.write(
+                "EPLRS_NCS apply send position_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
+                    time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    self_name=self.device_name,
+                    self_ip=self.get_host_ip(),
+                    other_name="EPLRS_NCS",
+                    other_ip=str(addr[0]),
+                    content=bean
+                )
+            )
+    def on_apply_measure_data_signal(self,addr):
+        bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
+                               temperature=float(self.temperature_show.text().replace("℃", "")))
+        bean.send(self.apply, addr)
+        # 记录发送的测量数据
+        with open(self.measure_data_path, 'a', encoding='utf-8') as f:
+            f.write(
+                "EPLRS_NCS apply send measure_data-->[{time}]:{self_name}({self_ip})-->{other_name}\({other_ip}):   {content}\n".format(
+                    time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    self_name=self.device_name,
+                    self_ip=self.get_host_ip(),
+                    other_name="EPLRS_NCS",
+                    other_ip=str(addr[0]),
+                    content=bean
+                )
+            )
     def on_clear_device_signal(self, addr):
         '''
         清除参数命令
@@ -172,6 +213,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_tabWidget_tabBarClicked(self, index):
+
         if 1 <= index <= 2:
             self.not_read_msg_count = 0
             self.not_read_count_label.setText("0")
@@ -233,7 +275,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         table_item = [QTableWidgetItem(x) for x in
                       [measure_bean.device_kind(), measure_bean.device_category + "_" + str(measure_bean.device_id),
                        addr[0],
-                       str(measure_bean.temperature)]]
+                       str(measure_bean.temperature)+"℃"]]
         for y in range(self.measure_table.columnCount()):
             table_item[y].setTextAlignment(Qt.AlignCenter)
             self.measure_table.setItem(self.measure_table.rowCount() - 1, y, table_item[y])
@@ -356,6 +398,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         device_id = self.ip_id_table.item(row, 1).text()  # 获得该行中的i
         self.other_equip_id.setText(device_id)
         self.other_equip_ip.setText(device_ip)
+
+        # bean = ApplyPosition()
+        # bean.send(self.apply,(self.other_equip_ip.text().strip(), self.MYPORT))
+
 
     def ip_id_list_to_many_one_line(self, ip_comma_interval):
         '''
