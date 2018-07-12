@@ -37,6 +37,20 @@ class UDPProtocol(DatagramProtocol):
         '''
         self.MainForm.apply_position_data_signal.emit(addr)
 
+    def text_received_handle(self, datagram, addr):
+        '''
+        收到消息发送成功的提示
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.text_dlg.text_data_receive_signal.emit()
+    def text_data_handle(self, datagram, addr):
+        # 处理发送过来的文字
+        self.MainForm.not_read_msg_count_signal.emit()
+        self.MainForm.text_dlg.text_data_signal.emit(datagram, addr)
+
+
     def apply_measure_handle(self, datagram, addr):
         '''
         对方请求自己的测量数据
@@ -45,6 +59,40 @@ class UDPProtocol(DatagramProtocol):
         :return:
         '''
         self.MainForm.apply_measure_data_signal.emit(addr)
+    def apply_voice_handle(self, datagram, addr):
+        '''
+        收到请求通话命令,其他人发来的命令，我方在主界面进行提示，让其选择是否同意。
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.apply_voice_signal.emit(datagram, addr)
+
+    def accept_voice_r_handle(self, datagram, addr):
+        '''
+        对方允许通话
+        :return:
+        '''
+        self.MainForm.voice_dlg.accept_voice_r_signal.emit(addr)
+
+    def reject_voice_r_handle(self, datagram, addr):
+        '''
+        对方拒绝通话，
+        :return:
+        '''
+        self.MainForm.voice_dlg.reject_voice_r_signal.emit()
+
+    def reject_voice_a_handle(self, datagram, addr):
+        self.MainForm.voice_dlg.reject_voice_a_signal.emit()
+
+    def voice_data_handle(self, datagram, addr):
+        '''
+        发送而来的语音信号，交给VoiceDialog播放
+        :param datagram:
+        :param addr:
+        :return:
+        '''
+        self.MainForm.voice_dlg.voice_data_signal.emit(datagram, addr)
 
     def clear_device_handle(self, datagram, addr):
         '''
@@ -99,8 +147,10 @@ class UDPProtocol(DatagramProtocol):
 
     def send_apply(self, order, addr):
         logger.info(order)
-        self.transport.write(order, addr)
-
+        try:
+            self.transport.write(order, addr)
+        except Exception as e:
+            logger.error(e)
 
 if __name__ == '__main__':
     from twisted.internet import reactor

@@ -7,8 +7,8 @@ import socket
 import sys
 from datetime import datetime
 
-from ApplyMeasure import ApplyMeasure
-from ApplyPosition import ApplyPosition
+from ApplyForVoiceBean import ApplyForVoiceBean
+from RejectVoiceReplyBean import RejectVoiceReplyBean
 
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
@@ -26,12 +26,16 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from property import Property
-from systemCheck import getCPUtemperature, getSystemInfo, getCPUuse, getRAMinfo, getDiskSpace, getVoiceCardStatus, \
-    getEthernetAdapterStatus
+from systemCheck import *
 from cat_net import get_net_data_num, convert_bytes_to_string
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
+# from ApplyMeasure import ApplyMeasure
+# from ApplyPosition import ApplyPosition
+from ChatDialog import ChatDialog
+from VoiceDialog import VoiceDialog
+from TimedMBox import TimedMBox
 
 
 class MainForm(QMainWindow, Ui_MainWindow):
@@ -46,13 +50,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
     measure_recv_signal = pyqtSignal()
     apply_position_data_signal = pyqtSignal(tuple)
     apply_measure_data_signal = pyqtSignal(tuple)
+    apply_voice_signal = pyqtSignal(bytes, tuple)
 
     def __init__(self):
         super(MainForm, self).__init__()
         self.setupUi(self)
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
         self.apply = UDPProtocol(MainForm=self)
-        self.MYPORT = 10001  # 其他节点默认端口
+        self.MYPORT = 8888  # 其他节点默认端口
         reactor.listenUDP(self.MYPORT, self.apply)
         self.init_property()
         self.send_rate_dial.valueChanged.connect(self.send_rate_dial_valueChanged)  # 奇怪，使用装饰器绑定不到，是库的bug么
@@ -81,7 +86,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.god_node_addr = ('127.0.0.1', 10000)  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
         self.property_save_button.clicked.emit()
+
         self.system_info_dlg = SystemInfoDialog(self)
+        self.text_dlg = ChatDialog(self)
+        self.voice_dlg = VoiceDialog(self)
         ##################定时查看网卡流量,两次只差计算网速###################
         self.interface = 'eth1'  # 网口名称
         self.net_data_num_queue = queue.Queue(1)
@@ -129,6 +137,41 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     content=bean
                 )
             )
+
+    @pyqtSlot()
+    def on_start_voice_button_clicked(self):
+        # print(self.ip_id_table.findItems("mse_t_v",Qt.MatchContains))
+        if self.other_equip_ip.text() == "":
+            QMessageBox.critical(self, "失败", "请选择对话的对象")
+        else:
+            self.voice_dlg.device_name_label.setText(self.other_equip_id.text())
+            self.voice_dlg.device_ip_label.setText(self.other_equip_ip.text())
+            self.voice_dlg.start_voice_button.setVisible(True)
+            self.voice_dlg.close_button.setVisible(False)
+            self.voice_dlg.show()
+            self.voice_dlg.raise_()
+            self.voice_dlg.activateWindow()
+
+    @pyqtSlot()
+    def on_send_file_button_clicked(self):
+        '''
+        点击发送文本后触发，生成一个聊天窗口，该窗口很简单，上面显示发送的和接收的文本
+        下面为一个输入框，点击发送后将文本发送出去。
+        :return:
+        '''
+        if self.other_equip_ip.text() == "":
+            QMessageBox.critical(self, "失败", "请选择发送的对象")
+        else:
+            self.not_read_msg_count = 0
+            self.not_read_count_label.setText(str(self.not_read_msg_count))
+            self.text_dlg.my_device_id.setText(str(self.device_name))
+            self.text_dlg.my_device_ip.setText(self.device_ip)
+            self.text_dlg.other_device_id.setText(self.other_equip_id.text())
+            self.text_dlg.other_device_ip.setText(self.other_equip_ip.text())
+            self.text_dlg.show()
+            self.text_dlg.raise_()
+            self.text_dlg.activateWindow()
+
     def on_apply_measure_data_signal(self,addr):
         bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                temperature=float(self.temperature_show.text().replace("℃", "")))
@@ -556,6 +599,49 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.tabWidget.setCurrentWidget(self.Property_tab)
         # self.send_text_button
 
+    def on_apply_voice_signal(self, datagram, addr):
+        '''
+        一切的起始点都要从voicedialog的状态是等待拨号，只有在该状态下，才可以接收别人的请求通话命令
+        如果其他请求通话时候，状态不是等待拨号，说明voicedialog正在通话中，返回拒绝通话命令（考虑正在通话命令）
+        :return:
+        '''
+        self.other_addr = addr
+        if self.voice_dlg.status_label.text() == "等待拨号":
+            # 如果状态是等待拨号，收到请求通话命令后，状态切换为正在建立连接，并创建回调，10秒后判断状态是否
+            # 仍然是正在建立连接，如果是，返回拒绝通话，并且挂断。
+            apply_voice_bean = ApplyForVoiceBean.frombytes(datagram)
+            self.voice_dlg.status_label.setText('正在建立连接')
+            self.voice_dlg.start_voice_button.setVisible(False)
+            self.voice_dlg.device_name_label.setText(apply_voice_bean.device_name)
+            self.voice_dlg.device_ip_label.setText(addr[0])
+            self.voice_dlg.show()
+            self.voice_dlg.raise_()
+            self.voice_dlg.activateWindow()
+            result = TimedMBox.question(title="请求通话", text=apply_voice_bean.device_category + "_" + str(
+                apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？")
+
+            # 上述会定时10秒
+            # result = QMessageBox.question(self.voice_dlg,
+            #                               "请求通话",
+            #                               apply_voice_bean.device_category + "_" + str(
+            #                                   apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？",
+            #                               QMessageBox.Yes | QMessageBox.No)
+            if result == QMessageBox.Yes:
+                # 如果同意对方的回答，那么就要开始向对象发送语音，弹出voiceDialog，发送语音的任务交给voiceDialog
+                accept_voice_reply_bean = AcceptVoiceReplyBean()
+                accept_voice_reply_bean.send(self.apply, addr)
+
+
+
+            elif result == QMessageBox.No:
+                # 　如果不同意通话，返回拒绝通话命令,并且挂断
+                reject_voice_reply_bean = RejectVoiceReplyBean()
+                reject_voice_reply_bean.send(self.apply, addr)
+                self.voice_dlg.close()
+        else:
+            # 如果状态不是 等待拨号，说明该设备正在通话中或者正在建立通话中，直接返回拒绝通话
+            reject_voice_reply_bean = RejectVoiceReplyBean()
+            reject_voice_reply_bean.send(self.apply, addr)
     def get_host_ip(self):
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

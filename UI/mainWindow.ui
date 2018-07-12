@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>778</width>
-    <height>440</height>
+    <width>959</width>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>781</width>
-      <height>391</height>
+      <width>951</width>
+      <height>441</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -33,10 +33,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_4">
       <property name="geometry">
        <rect>
-        <x>501</x>
+        <x>550</x>
         <y>0</y>
-        <width>271</width>
-        <height>261</height>
+        <width>391</width>
+        <height>321</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -272,8 +272,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>501</width>
-        <height>261</height>
+        <width>551</width>
+        <height>321</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -295,7 +295,7 @@
        <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </attribute>
       <column/>
       <column/>
@@ -305,12 +305,52 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>260</y>
-        <width>771</width>
+        <y>320</y>
+        <width>951</width>
         <height>81</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="start_voice_button">
+         <property name="text">
+          <string>话音交互</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="send_file_button">
+         <property name="text">
+          <string>数据交互</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item>
         <widget class="QPushButton" name="send_position_button">
          <property name="text">
@@ -410,8 +450,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>771</width>
-        <height>351</height>
+        <width>951</width>
+        <height>391</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -451,8 +491,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>771</width>
-        <height>361</height>
+        <width>941</width>
+        <height>391</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -491,8 +531,8 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>561</width>
-        <height>341</height>
+        <width>641</width>
+        <height>381</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -513,6 +553,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="send_rate_spinbox">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
            <property name="suffix">
             <string>kb/s</string>
            </property>
@@ -660,10 +703,10 @@
      <widget class="Line" name="line">
       <property name="geometry">
        <rect>
-        <x>579</x>
-        <y>90</y>
+        <x>670</x>
+        <y>70</y>
         <width>21</width>
-        <height>171</height>
+        <height>261</height>
        </rect>
       </property>
       <property name="orientation">
@@ -673,10 +716,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>599</x>
+        <x>699</x>
         <y>13</y>
-        <width>161</width>
-        <height>341</height>
+        <width>251</width>
+        <height>381</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -726,7 +769,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>778</width>
+     <width>959</width>
      <height>32</height>
     </rect>
    </property>

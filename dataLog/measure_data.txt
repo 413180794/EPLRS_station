@@ -84,3 +84,11 @@ EPLRS_NCS apply send measure_data-->[2018-07-12 10:40:33]:eplrs_t_r_0(192.168.1.
 receive txt-->[2018-07-12 10:40:33]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   27.8
 EPLRS_NCS apply send measure_data-->[2018-07-12 10:40:34]:eplrs_t_r_0(192.168.1.6)-->EPLRS_NCS\(127.0.0.1):   27.8
 receive txt-->[2018-07-12 10:40:34]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   27.8
+send measure_data-->[2018-07-12 17:32:08]:eplrs_t_r_0(192.168.1.6)-->mse_t_v_12(127.0.0.1):   0.0
+receive txt-->[2018-07-12 17:32:08]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   0.0
+send measure_data-->[2018-07-12 17:32:08]:eplrs_t_r_0(192.168.1.6)-->mse_t_v_12(127.0.0.1):   0.0
+receive txt-->[2018-07-12 17:32:08]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   0.0
+send measure_data-->[2018-07-12 17:32:09]:eplrs_t_r_0(192.168.1.6)-->mse_t_v_12(127.0.0.1):   0.0
+receive txt-->[2018-07-12 17:32:09]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   0.0
+send measure_data-->[2018-07-12 17:32:09]:eplrs_t_r_0(192.168.1.6)-->mse_t_v_12(127.0.0.1):   0.0
+receive txt-->[2018-07-12 17:32:09]:eplrs_t_r_0(127.0.0.1)-->eplrs_t_r_0(192.168.1.6):   0.0
