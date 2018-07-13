@@ -7,6 +7,8 @@ unit_ = ['B','KB', 'MB', 'GB', 'TB']
 
 
 def get_net_data(interface):
+    if not os.path.exists('/proc/net/dev'):
+        return None
     for line in open('/proc/net/dev', 'r'):
         if line.split(':')[0].find(interface) >= 0:
             return list(map(int, line.split(':')[1].split()))
