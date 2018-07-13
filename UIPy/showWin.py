@@ -80,6 +80,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
         self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度","高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
@@ -123,7 +124,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         QMessageBox.critical(self, "结果", "清除成功")
 
     def on_apply_position_data_signal(self, addr):
-        position_x,position_y,position_z = eval(self.position_show.text())
+        position_x,position_y,position_z = eval(self.position_show.text().replace("°","").replace("km",""))
         bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
                                 position_x=position_x, position_y=position_y,position_z=position_z)
         bean.send(self.apply, addr)
@@ -288,16 +289,27 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 )
             )
         position_recv_bean = PositionSuccessReceive.frombytes()
-        self.position_table.insertRow(self.position_table.rowCount())
+
         table_item = [QTableWidgetItem(x) for x in
-                      [position_bean.device_kind(), position_bean.device_category + "_" + str(position_bean.device_id),
+                      [position_bean.device_kind(),position_bean.device_name,
                        addr[0],
-                       str(position_bean.position_x)+"°",
-                       str(position_bean.position_y)+"°",
-                       str(position_bean.position_z)+"km"]]
-        for y in range(self.position_table.columnCount()):
-            table_item[y].setTextAlignment(Qt.AlignCenter)
-            self.position_table.setItem(self.position_table.rowCount() - 1, y, table_item[y])
+                       "{:.3f}°".format(position_bean.position_x),
+                       "{:.3f}°".format(position_bean.position_y),
+                       "{:.3f}km".format(position_bean.position_z)
+                       ]]
+        updateList = self.position_table.findItems(position_bean.device_name,Qt.MatchContains)
+
+        if len(updateList) == 0:
+            self.position_table.insertRow(self.position_table.rowCount())
+            for y in range(self.position_table.columnCount()):
+                table_item[y].setTextAlignment(Qt.AlignCenter)
+                self.position_table.setItem(self.position_table.rowCount() - 1, y, table_item[y])
+        else:
+            for x in updateList:
+                num = x.row()
+                for y in range(self.position_table.columnCount()):
+                    table_item[y].setTextAlignment(Qt.AlignCenter)
+                    self.position_table.setItem(num, y, table_item[y])
         position_recv_bean.send(self.apply, addr)
         self.position_table.scrollToBottom()
 
@@ -321,14 +333,24 @@ class MainForm(QMainWindow, Ui_MainWindow):
             )
             )
         measure_recv_bean = MeasureSuccessReceive.frombytes()
-        self.measure_table.insertRow(self.measure_table.rowCount())
         table_item = [QTableWidgetItem(x) for x in
                       [measure_bean.device_kind(), measure_bean.device_category + "_" + str(measure_bean.device_id),
                        addr[0],
                        str(measure_bean.temperature) + "℃"]]
-        for y in range(self.measure_table.columnCount()):
-            table_item[y].setTextAlignment(Qt.AlignCenter)
-            self.measure_table.setItem(self.measure_table.rowCount() - 1, y, table_item[y])
+
+        updateList = self.measure_table.findItems(measure_bean.device_name, Qt.MatchFixedString)
+
+        if len(updateList) == 0:
+            self.measure_table.insertRow(self.measure_table.rowCount())
+            for y in range(self.measure_table.columnCount()):
+                table_item[y].setTextAlignment(Qt.AlignCenter)
+                self.measure_table.setItem(self.measure_table.rowCount() - 1, y, table_item[y])
+        else:
+            for x in updateList:
+                num = x.row()
+                for y in range(self.measure_table.columnCount()):
+                    table_item[y].setTextAlignment(Qt.AlignCenter)
+                    self.measure_table.setItem(num, y, table_item[y])
         measure_recv_bean.send(self.apply, addr)
         self.measure_table.scrollToBottom()
 
