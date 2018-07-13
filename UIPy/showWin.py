@@ -7,8 +7,7 @@ import socket
 import sys
 from datetime import datetime
 
-from ApplyForVoiceBean import ApplyForVoiceBean
-from RejectVoiceReplyBean import RejectVoiceReplyBean
+
 
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
@@ -36,7 +35,8 @@ from ClearDeviceBean import ClearDeviceBean
 from ChatDialog import ChatDialog
 from VoiceDialog import VoiceDialog
 from TimedMBox import TimedMBox
-
+from ApplyForVoiceBean import ApplyForVoiceBean
+from RejectVoiceReplyBean import RejectVoiceReplyBean
 
 class MainForm(QMainWindow, Ui_MainWindow):
     reply_for_net_failure = pyqtSignal()
