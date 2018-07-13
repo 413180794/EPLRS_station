@@ -6,15 +6,21 @@ import time
 
 
 def getVoiceCardStatus():
-    return "Generalplus Technology Inc." in os.popen("lsusb").read()
-
+    try:
+        return "Generalplus Technology Inc." in os.popen("lsusb").read()
+    except Exception as e:
+        return None
 
 def getEthernetAdapterStatus():
-    return "Fast Ethernet Adapter" in os.popen("lsusb").read()
-
+    try:
+        return "Fast Ethernet Adapter" in os.popen("lsusb").read()
+    except Exception as e:
+        return None
 def getSystemInfo():
-    return os.popen('uname -m -r -s').readline()
-
+    try:
+        return os.popen('uname -m -r -s').readline()
+    except Exception as e:
+        return None
 
 def getCPUtemperature():
     try:
@@ -31,6 +37,7 @@ def getCPUtemperature():
 # Index 2: free RAM
 
 def getRAMinfo(type):
+
     p = os.popen('free')
     i = 0
     while 1:
@@ -38,18 +45,23 @@ def getRAMinfo(type):
         line = p.readline()
         if i == 2:
             result = dict(zip(("total","used","free"),tuple(line.split()[1:4])))
-            print(result.get(type))
-            return "{:.1f}Mb".format(float(result.get(type)) / 1000.0)
+            try:
+                return "{:.1f}Mb".format(float(result.get(type)) / 1000.0)
+            except Exception as e:
+                return ""
 
 # Return % of CPU used by user as a character string
 def getCPUuse():
     time1 = os.popen('cat /proc/stat').readline().split()[1:5]
     time.sleep(0.2)
     time2 = os.popen('cat /proc/stat').readline().split()[1:5]
-    deltaUsed = int(time2[0]) - int(time1[0]) + int(time2[2]) - int(time1[2])
-    deltaTotal = deltaUsed + int(time2[3]) - int(time1[3])
-    cpuUsage = float(deltaUsed) / float(deltaTotal) * 100
+    try:
+        deltaUsed = int(time2[0]) - int(time1[0]) + int(time2[2]) - int(time1[2])
+        deltaTotal = deltaUsed + int(time2[3]) - int(time1[3])
+        cpuUsage = float(deltaUsed) / float(deltaTotal) * 100
     # print('CPU Usage is now %.1f' % cpuUsage + '%')
+    except Exception as e:
+        return ""
 
     return "{:.1f}%".format(cpuUsage)
 
