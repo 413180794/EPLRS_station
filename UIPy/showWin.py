@@ -37,6 +37,7 @@ from VoiceDialog import VoiceDialog
 from TimedMBox import TimedMBox
 from ApplyForVoiceBean import ApplyForVoiceBean
 from RejectVoiceReplyBean import RejectVoiceReplyBean
+from AcceptVoiceReplyBean import AcceptVoiceReplyBean
 
 class MainForm(QMainWindow, Ui_MainWindow):
     reply_for_net_failure = pyqtSignal()
@@ -116,10 +117,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.saveAudio_path = os.path.join('..', 'saveAudio')
         self.dataLog_path = os.path.join('..', 'dataLog')
         self.property_path = os.path.join('property.json')
+        self.apply_voice_signal.connect(self.on_apply_voice_signal)
+
     def on_clear_success_signal(self):
         QMessageBox.critical(self, "结果", "清除成功")
 
-    def on_apply_position_data_signal(self,addr):
+    def on_apply_position_data_signal(self, addr):
         position_x = eval(self.position_show.text())[0]
         position_y = eval(self.position_show.text())[1]
         bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
@@ -172,7 +175,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.text_dlg.raise_()
             self.text_dlg.activateWindow()
 
-    def on_apply_measure_data_signal(self,addr):
+    def on_apply_measure_data_signal(self, addr):
         bean = MeasureDataBean(device_category=self.device_category, device_id=self.device_id,
                                temperature=float(self.temperature_show.text().replace("℃", "")))
         bean.send(self.apply, addr)
@@ -188,6 +191,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     content=bean
                 )
             )
+
     def on_clear_device_signal(self, addr):
         '''
         清除参数命令
@@ -321,7 +325,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         table_item = [QTableWidgetItem(x) for x in
                       [measure_bean.device_kind(), measure_bean.device_category + "_" + str(measure_bean.device_id),
                        addr[0],
-                       str(measure_bean.temperature)+"℃"]]
+                       str(measure_bean.temperature) + "℃"]]
         for y in range(self.measure_table.columnCount()):
             table_item[y].setTextAlignment(Qt.AlignCenter)
             self.measure_table.setItem(self.measure_table.rowCount() - 1, y, table_item[y])
@@ -413,6 +417,50 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 )
             self.send_states_show.setText("未接收")
 
+    def on_apply_voice_signal(self, datagram, addr):
+        '''
+        一切的起始点都要从voicedialog的状态是等待拨号，只有在该状态下，才可以接收别人的请求通话命令
+        如果其他请求通话时候，状态不是等待拨号，说明voicedialog正在通话中，返回拒绝通话命令（考虑正在通话命令）
+        :return:
+        '''
+        self.other_addr = addr
+        if self.voice_dlg.status_label.text() == "等待拨号":
+            # 如果状态是等待拨号，收到请求通话命令后，状态切换为正在建立连接，并创建回调，10秒后判断状态是否
+            # 仍然是正在建立连接，如果是，返回拒绝通话，并且挂断。
+            apply_voice_bean = ApplyForVoiceBean.frombytes(datagram)
+            self.voice_dlg.status_label.setText('正在建立连接')
+            self.voice_dlg.start_voice_button.setVisible(False)
+            self.voice_dlg.device_name_label.setText(apply_voice_bean.device_name)
+            self.voice_dlg.device_ip_label.setText(addr[0])
+            self.voice_dlg.show()
+            self.voice_dlg.raise_()
+            self.voice_dlg.activateWindow()
+            result = TimedMBox.question(title="请求通话", text=apply_voice_bean.device_category + "_" + str(
+                apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？")
+
+            # 上述会定时10秒
+            # result = QMessageBox.question(self.voice_dlg,
+            #                               "请求通话",
+            #                               apply_voice_bean.device_category + "_" + str(
+            #                                   apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？",
+            #                               QMessageBox.Yes | QMessageBox.No)
+            if result == QMessageBox.Yes:
+                # 如果同意对方的回答，那么就要开始向对象发送语音，弹出voiceDialog，发送语音的任务交给voiceDialog
+                accept_voice_reply_bean = AcceptVoiceReplyBean()
+                accept_voice_reply_bean.send(self.apply, addr)
+
+
+
+            elif result == QMessageBox.No:
+                # 　如果不同意通话，返回拒绝通话命令,并且挂断
+                reject_voice_reply_bean = RejectVoiceReplyBean()
+                reject_voice_reply_bean.send(self.apply, addr)
+                self.voice_dlg.close()
+        else:
+            # 如果状态不是 等待拨号，说明该设备正在通话中或者正在建立通话中，直接返回拒绝通话
+            reject_voice_reply_bean = RejectVoiceReplyBean()
+            reject_voice_reply_bean.send(self.apply, addr)
+
     def closeEvent(self, QCloseEvent):
         QCoreApplication.instance().quit()
         # QCloseEvent.accept()
@@ -447,7 +495,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         # bean = ApplyPosition()
         # bean.send(self.apply,(self.other_equip_ip.text().strip(), self.MYPORT))
-
 
     def ip_id_list_to_many_one_line(self, ip_comma_interval):
         '''
@@ -537,10 +584,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
             with open("property.json", "r") as f:
                 property_json = json.load(f)
                 assert type(property_json) == dict
-            for key,name in property_json.items():
+            for key, name in property_json.items():
                 getattr(getattr(self, key + "_combox"), "setCurrentText")(name)
         else:
             raise Exception
+
     @pyqtSlot()
     def on_property_save_button_clicked(self):
         '''
@@ -642,6 +690,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             # 如果状态不是 等待拨号，说明该设备正在通话中或者正在建立通话中，直接返回拒绝通话
             reject_voice_reply_bean = RejectVoiceReplyBean()
             reject_voice_reply_bean.send(self.apply, addr)
+
     def get_host_ip(self):
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

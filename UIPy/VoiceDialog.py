@@ -8,7 +8,7 @@ from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QMessageBox
 import sys
 
-from mylogging import logger
+
 
 sys.path.append(os.path.abspath("../Bean"))
 from AcceptVoiceReplyBean import AcceptVoiceReplyBean
@@ -17,7 +17,7 @@ from RejectVoiceApplyBean import RejectVoiceApplyBean
 from VoiceDataBean import VoiceDataBean
 from voiceWindows import Ui_Dialog
 import ffmpy3
-
+from mylogging import logger
 
 # linux与mac交互测试成功。目前来说还有一些小问题，不应该自己给自己发送语音。要限制这种行为
 
@@ -93,18 +93,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
         voice_data_bean = VoiceDataBean.frombytes(datagram)
         # print(voice_data_bean.voice_data)
         print("shoudaoqian" + str(len(voice_data_bean.voice_data)))
-        # voice_data = voice_data_bean.voice_data
-        # if self.receive_audio_file_name is not None:
-        #     if not os.path.exists(self.receive_audio_file_name):
-        #         self.receive_wf = wave.open(self.receive_audio_file_name, 'wb')
-        #         self.receive_wf.setnchannels(self.CHANNELS)
-        #         self.receive_wf.setsampwidth(pyaudio.PyAudio().get_sample_size(self.FORMAT))
-        #         self.receive_wf.setframerate(self.RATE)
-        #         self.receive_wf.writeframes(voice_data)
-        #     # with open(self.receive_audio_file_name, 'ab') as f:
-        #     #         f.write(voice_data_bean.voice_data)
-        #     else:
-        #         self.receive_wf.writeframes(voice_data)
         voice_data = audioop.adpcm2lin(voice_data_bean.voice_data, 2, None)[0]
 
         if self.receive_audio_file_name is not None:
@@ -114,8 +102,8 @@ class VoiceDialog(QDialog, Ui_Dialog):
                 self.receive_wf.setsampwidth(pyaudio.PyAudio().get_sample_size(self.FORMAT))
                 self.receive_wf.setframerate(self.RATE)
                 self.receive_wf.writeframes(voice_data)
-            # with open(self.receive_audio_file_name, 'ab') as f:
-            #         f.write(voice_data_bean.voice_data)
+                with open(self.receive_audio_file_name, 'ab') as f:
+                         f.write(voice_data_bean.voice_data)
             else:
                 self.receive_wf.writeframes(voice_data)
 
@@ -147,8 +135,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
                     inputs={self.send_audio_file_name: None},
                     outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
                 ).run()
-            # os.remove(self.receive_audio_file_name)
-            # os.remove(self.send_audio_file_name)
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
             self.receive_wf = None
@@ -167,8 +153,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
                     inputs={self.send_audio_file_name: None},
                     outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
                 ).run()
-            # os.remove(self.receive_audio_file_name)
-            # os.remove(self.send_audio_file_name)
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
             self.receive_wf = None
@@ -227,6 +211,8 @@ class VoiceDialog(QDialog, Ui_Dialog):
             pass
         elif self.input_stream.is_active():
             self.input_stream.stop_stream()
+            reject_voice_apply_bean = RejectVoiceApplyBean()
+            reject_voice_apply_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
             if os.path.exists(self.receive_audio_file_name):
                 ffmpy3.FFmpeg(
                     inputs={self.receive_audio_file_name: None},
@@ -245,8 +231,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
                     logger.error(e)
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
-            reject_voice_apply_bean = RejectVoiceApplyBean()
-            reject_voice_apply_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
+
         self.status_label.setText("等待拨号")
         self.device_ip_label.setText("")
         self.device_name_label.setText("")
