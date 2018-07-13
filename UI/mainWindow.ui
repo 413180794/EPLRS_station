@@ -72,7 +72,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>经纬度</string>
+            <string>经度纬度高度</string>
            </property>
           </widget>
          </item>
@@ -513,7 +513,7 @@
        <enum>Qt::ElideMiddle</enum>
       </property>
       <property name="columnCount">
-       <number>5</number>
+       <number>6</number>
       </property>
       <attribute name="horizontalHeaderCascadingSectionResizes">
        <bool>false</bool>
@@ -527,6 +527,7 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
+      <column/>
       <column/>
       <column/>
       <column/>

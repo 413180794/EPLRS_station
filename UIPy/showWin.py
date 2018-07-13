@@ -80,7 +80,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度"])
+        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度","高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -108,7 +108,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.get_temperature_timer.setInterval(10000)
         self.get_temperature_timer.start()
         # ---------------------------显示经纬度(38.00,23.00)-----------------------------#
-        self.position_show.setText("(116.23,39.54)")
+        self.position_show.setText("(116.23°,39.54°,12.30km)")
         # 需要删除的对象
         self.clear_success_signal.connect(self.on_clear_success_signal)
         self.clear_device_signal.connect(self.on_clear_device_signal)
@@ -123,10 +123,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         QMessageBox.critical(self, "结果", "清除成功")
 
     def on_apply_position_data_signal(self, addr):
-        position_x = eval(self.position_show.text())[0]
-        position_y = eval(self.position_show.text())[1]
+        position_x,position_y,position_z = eval(self.position_show.text())
         bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
-                                position_x=position_x, position_y=position_y)
+                                position_x=position_x, position_y=position_y,position_z=position_z)
         bean.send(self.apply, addr)
         # 记录发送的位置数据
         with open(self.position_data_path, 'a', encoding='utf-8') as f:
@@ -293,8 +292,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         table_item = [QTableWidgetItem(x) for x in
                       [position_bean.device_kind(), position_bean.device_category + "_" + str(position_bean.device_id),
                        addr[0],
-                       str(position_bean.position_x),
-                       str(position_bean.position_y)]]
+                       str(position_bean.position_x)+"°",
+                       str(position_bean.position_y)+"°",
+                       str(position_bean.position_z)+"km"]]
         for y in range(self.position_table.columnCount()):
             table_item[y].setTextAlignment(Qt.AlignCenter)
             self.position_table.setItem(self.position_table.rowCount() - 1, y, table_item[y])
@@ -398,10 +398,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "" or self.other_equip_ip.text() == "未连接":
             QMessageBox.critical(self, "失败", "请选择报告的对象")
         else:
-            position_x = eval(self.position_show.text())[0]
-            position_y = eval(self.position_show.text())[1]
+            position_x,position_y,position_z = eval(self.position_show.text().replace("°","").replace("km",""))
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
-                                    position_x=position_x, position_y=position_y)
+                                    position_x=position_x, position_y=position_y,position_z=position_z)
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             # 记录发送的位置数据
             with open(self.position_data_path, 'a', encoding='utf-8') as f:
@@ -417,49 +416,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 )
             self.send_states_show.setText("未接收")
 
-    def on_apply_voice_signal(self, datagram, addr):
-        '''
-        一切的起始点都要从voicedialog的状态是等待拨号，只有在该状态下，才可以接收别人的请求通话命令
-        如果其他请求通话时候，状态不是等待拨号，说明voicedialog正在通话中，返回拒绝通话命令（考虑正在通话命令）
-        :return:
-        '''
-        self.other_addr = addr
-        if self.voice_dlg.status_label.text() == "等待拨号":
-            # 如果状态是等待拨号，收到请求通话命令后，状态切换为正在建立连接，并创建回调，10秒后判断状态是否
-            # 仍然是正在建立连接，如果是，返回拒绝通话，并且挂断。
-            apply_voice_bean = ApplyForVoiceBean.frombytes(datagram)
-            self.voice_dlg.status_label.setText('正在建立连接')
-            self.voice_dlg.start_voice_button.setVisible(False)
-            self.voice_dlg.device_name_label.setText(apply_voice_bean.device_name)
-            self.voice_dlg.device_ip_label.setText(addr[0])
-            self.voice_dlg.show()
-            self.voice_dlg.raise_()
-            self.voice_dlg.activateWindow()
-            result = TimedMBox.question(title="请求通话", text=apply_voice_bean.device_category + "_" + str(
-                apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？")
 
-            # 上述会定时10秒
-            # result = QMessageBox.question(self.voice_dlg,
-            #                               "请求通话",
-            #                               apply_voice_bean.device_category + "_" + str(
-            #                                   apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？",
-            #                               QMessageBox.Yes | QMessageBox.No)
-            if result == QMessageBox.Yes:
-                # 如果同意对方的回答，那么就要开始向对象发送语音，弹出voiceDialog，发送语音的任务交给voiceDialog
-                accept_voice_reply_bean = AcceptVoiceReplyBean()
-                accept_voice_reply_bean.send(self.apply, addr)
-
-
-
-            elif result == QMessageBox.No:
-                # 　如果不同意通话，返回拒绝通话命令,并且挂断
-                reject_voice_reply_bean = RejectVoiceReplyBean()
-                reject_voice_reply_bean.send(self.apply, addr)
-                self.voice_dlg.close()
-        else:
-            # 如果状态不是 等待拨号，说明该设备正在通话中或者正在建立通话中，直接返回拒绝通话
-            reject_voice_reply_bean = RejectVoiceReplyBean()
-            reject_voice_reply_bean.send(self.apply, addr)
 
     def closeEvent(self, QCloseEvent):
         QCoreApplication.instance().quit()
