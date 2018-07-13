@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>959</width>
-    <height>518</height>
+    <width>1018</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,12 @@
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>951</width>
-      <height>441</height>
+      <width>1011</width>
+      <height>431</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="MainWindow_tab">
      <attribute name="title">
@@ -33,7 +33,7 @@
      <widget class="QWidget" name="verticalLayoutWidget_4">
       <property name="geometry">
        <rect>
-        <x>550</x>
+        <x>610</x>
         <y>0</y>
         <width>391</width>
         <height>321</height>
@@ -240,7 +240,7 @@
          <item>
           <widget class="QLabel" name="_search_device_label">
            <property name="text">
-            <string>        设备搜索      </string>
+            <string>                  设备搜索      </string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -261,7 +261,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="search_edit"/>
+          <widget class="QLineEdit" name="search_edit">
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="cursorMoveStyle">
+            <enum>Qt::VisualMoveStyle</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -272,7 +279,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>551</width>
+        <width>611</width>
         <height>321</height>
        </rect>
       </property>
@@ -306,7 +313,7 @@
        <rect>
         <x>0</x>
         <y>320</y>
-        <width>951</width>
+        <width>1001</width>
         <height>81</height>
        </rect>
       </property>
@@ -450,7 +457,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>951</width>
+        <width>1001</width>
         <height>391</height>
        </rect>
       </property>
@@ -491,7 +498,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>941</width>
+        <width>1011</width>
         <height>391</height>
        </rect>
       </property>
@@ -531,7 +538,7 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>641</width>
+        <width>691</width>
         <height>381</height>
        </rect>
       </property>
@@ -553,8 +560,14 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="send_rate_spinbox">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
            </property>
            <property name="suffix">
             <string>kb/s</string>
@@ -703,8 +716,8 @@
      <widget class="Line" name="line">
       <property name="geometry">
        <rect>
-        <x>670</x>
-        <y>70</y>
+        <x>710</x>
+        <y>60</y>
         <width>21</width>
         <height>261</height>
        </rect>
@@ -716,10 +729,10 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>699</x>
-        <y>13</y>
+        <x>750</x>
+        <y>0</y>
         <width>251</width>
-        <height>381</height>
+        <height>391</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -769,7 +782,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>959</width>
+     <width>1018</width>
      <height>32</height>
     </rect>
    </property>
