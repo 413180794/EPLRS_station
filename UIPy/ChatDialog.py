@@ -60,7 +60,24 @@ class ChatDialog(QDialog, Ui_Dialog):
         :return:
         '''
         self.close()
+    @pyqtSlot()
+    def on_turn_about_order_button_clicked(self):
+        self.textEdit.setText("向后转！")
+        self.send_msg_button.clicked.emit()
 
+    @pyqtSlot()
+    def on_turn_left_order_button_clicked(self):
+        self.textEdit.setText("向左转！")
+        self.send_msg_button.clicked.emit()
+    @pyqtSlot()
+    def on_turn_right_order_button_clicked(self):
+        self.textEdit.setText("向右转！")
+        self.send_msg_button.clicked.emit()
+    @pyqtSlot()
+    def on_forward_order_button_clicked(self):
+        self.textEdit.setText("前进！")
+        self.send_msg_button.clicked.emit()
+        
     @pyqtSlot()
     def on_send_msg_button_clicked(self):
         '''

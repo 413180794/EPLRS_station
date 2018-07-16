@@ -603,7 +603,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :return:
         '''
         # 该函数将property_json中的值进行打包，所有字节都是16个字节。json的长度可变
-        width_band = {"30MHz~90MHz": 1, "610MHz~690MHz": 2, "225MHz~512MHz": 4, "1350MHz~1850MHz": 8}
+        width_band = {"225MHz~512MHz": 1}
         interval = {"625kHz": 625, "25kHz": 25}
         apply_for_net_obj = ApplyForNetBean(
             width_band=width_band.get(property_json.get("width_band")),

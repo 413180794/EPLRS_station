@@ -370,7 +370,7 @@
        <item>
         <widget class="QPushButton" name="send_file_button">
          <property name="text">
-          <string>数据交互</string>
+          <string>指挥控制</string>
          </property>
         </widget>
        </item>
@@ -677,24 +677,12 @@
          </item>
          <item>
           <widget class="QComboBox" name="width_band_combox">
-           <item>
-            <property name="text">
-             <string>30MHz~90MHz</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>610MHz~690MHz</string>
-            </property>
-           </item>
+           <property name="currentText">
+            <string>225MHz~512MHz</string>
+           </property>
            <item>
             <property name="text">
              <string>225MHz~512MHz</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>1350MHz~1850MHz</string>
             </property>
            </item>
           </widget>
