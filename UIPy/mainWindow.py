@@ -11,17 +11,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1018, 580)
+        MainWindow.resize(1018, 601)
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        MainWindow.setFont(font)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, -10, 1011, 591))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1011, 591))
         self.tabWidget.setObjectName("tabWidget")
         self.MainWindow_tab = QtWidgets.QWidget()
         self.MainWindow_tab.setObjectName("MainWindow_tab")
         self.verticalLayoutWidget_4 = QtWidgets.QWidget(self.MainWindow_tab)
-        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(610, 0, 401, 451))
+        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(610, 0, 401, 454))
         self.verticalLayoutWidget_4.setObjectName("verticalLayoutWidget_4")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -122,6 +125,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self._search_device_label = QtWidgets.QLabel(self.verticalLayoutWidget_4)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self._search_device_label.setFont(font)
         self._search_device_label.setAlignment(QtCore.Qt.AlignCenter)
         self._search_device_label.setObjectName("_search_device_label")
         self.horizontalLayout_14.addWidget(self._search_device_label)
@@ -314,7 +320,7 @@ class Ui_MainWindow(object):
         self.set_property.setObjectName("set_property")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
