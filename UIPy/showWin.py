@@ -57,7 +57,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         super(MainForm, self).__init__()
         self.setupUi(self)
         # self.setWindowFlags(Qt.CustomizeWindowHint)
-        # self.showFullScreen()
+        self.showFullScreen()
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
         self.apply = UDPProtocol(MainForm=self)
         self.MYPORT = 8888  # 其他节点默认端口
