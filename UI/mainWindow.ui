@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1018</width>
-    <height>535</height>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>10</y>
+      <y>0</y>
       <width>1011</width>
-      <height>521</height>
+      <height>551</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -38,8 +38,8 @@
        <rect>
         <x>610</x>
         <y>0</y>
-        <width>391</width>
-        <height>381</height>
+        <width>401</width>
+        <height>411</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -276,7 +276,7 @@
         <x>0</x>
         <y>0</y>
         <width>611</width>
-        <height>381</height>
+        <height>411</height>
        </rect>
       </property>
       <property name="editTriggers">
@@ -308,8 +308,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>380</y>
-        <width>1001</width>
+        <y>410</y>
+        <width>1011</width>
         <height>101</height>
        </rect>
       </property>
