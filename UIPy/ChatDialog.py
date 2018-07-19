@@ -77,7 +77,7 @@ class ChatDialog(QDialog, Ui_Dialog):
     def on_forward_order_button_clicked(self):
         self.textEdit.setText("前进！")
         self.send_msg_button.clicked.emit()
-        
+
     @pyqtSlot()
     def on_send_msg_button_clicked(self):
         '''

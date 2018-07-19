@@ -56,13 +56,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MainForm, self).__init__()
         self.setupUi(self)
+        # self.setWindowFlags(Qt.CustomizeWindowHint)
+        # self.showFullScreen()
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
         self.apply = UDPProtocol(MainForm=self)
         self.MYPORT = 8888  # 其他节点默认端口
         reactor.listenUDP(self.MYPORT, self.apply)
         self.init_property()
-        self.send_rate_dial.valueChanged.connect(self.send_rate_dial_valueChanged)  # 奇怪，使用装饰器绑定不到，是库的bug么
-        self.send_rate_spinbox.valueChanged.connect(self.send_rate_spinbox_valueChanged)
         self.reply_for_net_success.connect(self.on_reply_for_net_success)
         self.reply_for_net_failure.connect(self.on_reply_for_net_failure)
         self.position_data_signal.connect(self.on_position_data_signal)
@@ -80,7 +80,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
+        os.popen('onboard')
         self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度","高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
@@ -451,7 +451,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         将未读消息加一
         :return:
         '''
-        if self.Position_tab.isVisible() or self.Measure_tab.isVisible():
+        if self.Position_tab.isVisible() or self.Measure_tab.isVisible() or self.text_dlg.isVisible():
             # 如果聊天框被打开，新的数据上来，什么都不用干
             pass
         else:
