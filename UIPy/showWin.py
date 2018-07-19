@@ -539,19 +539,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         QMessageBox.critical(self, "入网失败", "请正确设置设备属性，或联系网络管理员")
         self.clear_table_data()
 
-    def send_rate_spinbox_valueChanged(self):
-        '''
-        dial与spinbox绑定
-        :return:
-        '''
-        self.send_rate_dial.setValue(int(self.send_rate_spinbox.value()))
 
     def on_connect_refused(self):
         QMessageBox.critical(self, "入网申请错误", "请检查网络连接")
 
     # 绑定滚动dial
-    def send_rate_dial_valueChanged(self):
-        self.send_rate_spinbox.setValue(self.send_rate_dial.value())
+    # def send_rate_dial_valueChanged(self):
+    #     self.send_rate_spinbox.setValue(self.send_rate_dial.value())
 
     # 申请入网 属性配置 只需要 width_band interval routing_parameters
     def init_property(self):
@@ -690,7 +684,7 @@ if __name__ == '__main__':
 
     qt5reactor.install()
     from twisted.internet import reactor
-
+    reactor.suggestThreadPoolSize(30)
     win = MainForm()
     win.show()
     reactor.run()
