@@ -80,7 +80,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        os.popen('onboard')
+        # os.popen('onboard')
         self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度","高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
