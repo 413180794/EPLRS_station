@@ -15,7 +15,7 @@ class VoiceDataBean(object):
     device_category = typed_property('device_category', str)
     device_id = typed_property('device_id', int)
     voice_data = typed_property('voice_data', bytes)
-    typecode = '<16s16si1024s'
+    typecode = '<16s16si900s'
     typecode_without_voice = "<16s16si"
 
     def __init__(self, *, device_category, device_id, voice_data):

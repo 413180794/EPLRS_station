@@ -16,7 +16,7 @@ from ApplyForVoiceBean import ApplyForVoiceBean
 from RejectVoiceApplyBean import RejectVoiceApplyBean
 from VoiceDataBean import VoiceDataBean
 from voiceWindows import Ui_Dialog
-import ffmpy3
+import speex
 from mylogging import logger
 
 # linux与mac交互测试成功。目前来说还有一些小问题，不应该自己给自己发送语音。要限制这种行为
@@ -44,11 +44,15 @@ class VoiceDialog(QDialog, Ui_Dialog):
         # 一个用于被动向self.other_addr 发送语音。
         # 一个主动发送，一个被动发送
         self.ifremove_wav = True
-        self.CHUNK = 1024 * 2  # 语音一次读取的大小
+        self.CHUNK = 6400  # 语音一次读取的大小
         self.WIDTH = 1
         self.CHANNELS = 1
         self.RATE = 8000
         self.FORMAT = pyaudio.paInt16
+
+        self.speexEncode = speex.SpeexEncoder(speex.SPEEX_MODEID_UWB)
+        self.speexDecode = speex.SpeexDecoder(speex.SPEEX_MODEID_UWB)
+
         self.input_stream = None
         self.output_stream = pyaudio.PyAudio().open(
             format=self.FORMAT,
@@ -75,16 +79,16 @@ class VoiceDialog(QDialog, Ui_Dialog):
                 self.send_wf.writeframes(voice_data)
             else:
                 self.send_wf.writeframes(voice_data)
-            print('yasuoqian' + str(len(voice_data)))
-            voice_data = audioop.lin2adpcm(voice_data, 2, None)[0]
-            print('yasuohou' + str(len(voice_data)))
+            print('send before compress' + str(len(voice_data)))
+            compress_voice_data = self.speexEncode.encode(voice_data)  # 使用speex库进行压缩
+            print('send after compress' + str(len(compress_voice_data)))
             # if self.send_audio_file_name is not None:
             #     with open(self.send_audio_file_name, 'ab') as f:
             #         f.write(voice_data)
 
             device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
             voice_data_bean = VoiceDataBean(device_category=device_category, device_id=int(device_id),
-                                            voice_data=voice_data)
+                                            voice_data=compress_voice_data)
 
             voice_data_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
         return (None, pyaudio.paContinue)
@@ -93,7 +97,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
         voice_data_bean = VoiceDataBean.frombytes(datagram)
         # print(voice_data_bean.voice_data)
         print("shoudaoqian" + str(len(voice_data_bean.voice_data)))
-        voice_data = audioop.adpcm2lin(voice_data_bean.voice_data, 2, None)[0]
+        voice_data = self.speexDecode.decode(voice_data_bean.voice_data)  # 解压缩
 
         if self.receive_audio_file_name is not None:
             if not os.path.exists(self.receive_audio_file_name):
@@ -107,7 +111,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
             else:
                 self.receive_wf.writeframes(voice_data)
 
-        print("shoudaohou" + str(len(voice_data)))
+        # print("shoudaohou" + str(len(voice_data)))
         self.output_stream.write(voice_data)
 
     def on_reject_voice_r_signal(self):
@@ -125,16 +129,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
         '''
         if self.input_stream is None:
             self.status_label.setText("对方已挂断")
-            if self.receive_audio_file_name is not None:
-                ffmpy3.FFmpeg(
-                    inputs={self.receive_audio_file_name: None},
-                    outputs={str(self.receive_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if self.send_audio_file_name is not None:
-                ffmpy3.FFmpeg(
-                    inputs={self.send_audio_file_name: None},
-                    outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
             self.receive_wf = None
@@ -143,16 +137,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
         elif self.input_stream.is_active():
             self.input_stream.stop_stream()
             self.status_label.setText("对方已挂断")
-            if self.receive_audio_file_name is not None:
-                ffmpy3.FFmpeg(
-                    inputs={self.receive_audio_file_name: None},
-                    outputs={str(self.receive_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if self.send_audio_file_name is not None:
-                ffmpy3.FFmpeg(
-                    inputs={self.send_audio_file_name: None},
-                    outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
             self.receive_wf = None
@@ -190,22 +174,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
             print(self.receive_audio_file_name)
     def closeEvent(self, QClosewEvent):
         if self.input_stream is None:
-            if self.receive_audio_file_name is not None and os.path.exists(self.receive_audio_file_name):
-                ffmpy3.FFmpeg(
-                    inputs={self.receive_audio_file_name: None},
-                    outputs={str(self.receive_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if self.send_audio_file_name is not None and os.path.exists(self.send_audio_file_name):
-                ffmpy3.FFmpeg(
-                    inputs={self.send_audio_file_name: None},
-                    outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if self.ifremove_wav and self.receive_audio_file_name is not None and self.send_audio_file_name is not None:
-                try:
-                    os.remove(self.receive_audio_file_name)
-                    os.remove(self.send_audio_file_name)
-                except Exception as e:
-                    logger.error(e)
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
             pass
@@ -213,22 +181,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
             self.input_stream.stop_stream()
             reject_voice_apply_bean = RejectVoiceApplyBean()
             reject_voice_apply_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
-            if os.path.exists(self.receive_audio_file_name):
-                ffmpy3.FFmpeg(
-                    inputs={self.receive_audio_file_name: None},
-                    outputs={str(self.receive_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if os.path.exists(self.send_audio_file_name):
-                ffmpy3.FFmpeg(
-                    inputs={self.send_audio_file_name: None},
-                    outputs={str(self.send_audio_file_name).replace("wav", "mp3"): None}
-                ).run()
-            if self.ifremove_wav and self.receive_audio_file_name is not None and self.send_audio_file_name is not None:
-                try:
-                    os.remove(self.receive_audio_file_name)
-                    os.remove(self.send_audio_file_name)
-                except Exception as e:
-                    logger.error(e)
             self.receive_audio_file_name = None
             self.send_audio_file_name = None
 
