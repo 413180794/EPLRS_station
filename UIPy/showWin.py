@@ -633,6 +633,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             apply_voice_bean = ApplyForVoiceBean.frombytes(datagram)
             self.voice_dlg.status_label.setText('正在建立连接')
             self.voice_dlg.start_voice_button.setVisible(False)
+            self.voice_dlg.close_button.setVisible(True)
             self.voice_dlg.device_name_label.setText(apply_voice_bean.device_name)
             self.voice_dlg.device_ip_label.setText(addr[0])
             self.voice_dlg.show()
