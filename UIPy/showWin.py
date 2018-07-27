@@ -150,7 +150,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "":
             QMessageBox.critical(self, "失败", "请选择对话的对象")
         else:
-            if self.voice_dlg.isVisible():
+            if not self.voice_dlg.isVisible():
                 self.voice_dlg.device_name_label.setText(self.other_equip_id.text())
                 self.voice_dlg.device_ip_label.setText(self.other_equip_ip.text())
                 self.voice_dlg.start_voice_button.setVisible(True)
