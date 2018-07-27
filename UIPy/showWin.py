@@ -7,8 +7,6 @@ import socket
 import sys
 from datetime import datetime
 
-
-
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
 sys.path.append(os.path.abspath("../UDPChat"))
@@ -39,6 +37,7 @@ from ApplyForVoiceBean import ApplyForVoiceBean
 from RejectVoiceReplyBean import RejectVoiceReplyBean
 from AcceptVoiceReplyBean import AcceptVoiceReplyBean
 
+
 class MainForm(QMainWindow, Ui_MainWindow):
     reply_for_net_failure = pyqtSignal()
     reply_for_net_success = pyqtSignal(bytes)
@@ -60,8 +59,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.showFullScreen()
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
         self.apply = UDPProtocol(MainForm=self)
-        self.MYPORT = 8888  # 其他节点默认端口
-        reactor.listenUDP(self.MYPORT, self.apply)
+
+
         self.init_property()
         self.reply_for_net_success.connect(self.on_reply_for_net_success)
         self.reply_for_net_failure.connect(self.on_reply_for_net_failure)
@@ -72,21 +71,25 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.not_read_msg_count_signal.connect(self.on_not_read_msg_count_signal)
         self.apply_measure_data_signal.connect(self.on_apply_measure_data_signal)
         self.apply_position_data_signal.connect(self.on_apply_position_data_signal)
-        self.device_id = 0
-        self.device_category = "eplrs_t_r"
+        with open("device.json", 'r') as f:
+            device_config = json.load(f)
+        self.device_id = device_config['device_id']
+        self.device_category = device_config['device_category']
+        self.MYPORT = device_config['my_port']
         self.device_name = self.device_category + "_" + str(self.device_id)
         self.device_ip = self.get_host_ip()
         self.measure_data_path = os.path.join("..", "dataLog", "measure_data.txt")
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
         self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # os.popen('onboard')
-        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度","高度"])
+        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度", "高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.god_node_addr = ('127.0.0.1', 10000)  # 上帝节点的地址
+
+        self.god_node_addr = (device_config['god_node_ip'], device_config['god_node_port'])  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
+        reactor.listenUDP(self.MYPORT, self.apply)
         self.property_save_button.clicked.emit()
 
         self.system_info_dlg = SystemInfoDialog(self)
@@ -124,9 +127,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         QMessageBox.critical(self, "结果", "清除成功")
 
     def on_apply_position_data_signal(self, addr):
-        position_x,position_y,position_z = eval(self.position_show.text().replace("°","").replace("km",""))
+        position_x, position_y, position_z = eval(self.position_show.text().replace("°", "").replace("km", ""))
         bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
-                                position_x=position_x, position_y=position_y,position_z=position_z)
+                                position_x=position_x, position_y=position_y, position_z=position_z)
         bean.send(self.apply, addr)
         # 记录发送的位置数据
         with open(self.position_data_path, 'a', encoding='utf-8') as f:
@@ -291,13 +294,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         position_recv_bean = PositionSuccessReceive.frombytes()
 
         table_item = [QTableWidgetItem(x) for x in
-                      [position_bean.device_kind(),position_bean.device_name,
+                      [position_bean.device_kind(), position_bean.device_name,
                        addr[0],
                        "{:.3f}°".format(position_bean.position_x),
                        "{:.3f}°".format(position_bean.position_y),
                        "{:.3f}km".format(position_bean.position_z)
                        ]]
-        updateList = self.position_table.findItems(position_bean.device_name,Qt.MatchContains)
+        updateList = self.position_table.findItems(position_bean.device_name, Qt.MatchContains)
 
         if len(updateList) == 0:
             self.position_table.insertRow(self.position_table.rowCount())
@@ -420,9 +423,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "" or self.other_equip_ip.text() == "未连接":
             QMessageBox.critical(self, "失败", "请选择报告的对象")
         else:
-            position_x,position_y,position_z = eval(self.position_show.text().replace("°","").replace("km",""))
+            position_x, position_y, position_z = eval(self.position_show.text().replace("°", "").replace("km", ""))
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
-                                    position_x=position_x, position_y=position_y,position_z=position_z)
+                                    position_x=position_x, position_y=position_y, position_z=position_z)
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
             # 记录发送的位置数据
             with open(self.position_data_path, 'a', encoding='utf-8') as f:
@@ -437,8 +440,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     )
                 )
             self.send_states_show.setText("未接收")
-
-
 
     def closeEvent(self, QCloseEvent):
         QCoreApplication.instance().quit()
@@ -538,7 +539,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.if_connected_main.setText("未连接")
         QMessageBox.critical(self, "入网失败", "请正确设置设备属性，或联系网络管理员")
         self.clear_table_data()
-
 
     def on_connect_refused(self):
         QMessageBox.critical(self, "入网申请错误", "请检查网络连接")
@@ -684,6 +684,7 @@ if __name__ == '__main__':
 
     qt5reactor.install()
     from twisted.internet import reactor
+
     reactor.suggestThreadPoolSize(30)
     win = MainForm()
     win.show()

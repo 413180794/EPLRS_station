@@ -1,0 +1,7 @@
+{
+  "device_id": 0,
+  "device_category": "Eplrs_t_r",
+  "my_port": 8888,
+  "god_node_ip":"127.0.0.1",
+  "god_node_port":10000
+}

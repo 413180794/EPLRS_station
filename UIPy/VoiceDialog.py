@@ -43,6 +43,9 @@ class VoiceDialog(QDialog, Ui_Dialog):
         # self 需要两个定时器，一个用于主动向self.device_ip 发送语音
         # 一个用于被动向self.other_addr 发送语音。
         # 一个主动发送，一个被动发送
+        self.send_audio_frames = []
+        self.receive_audio_frames = []
+
         self.ifremove_wav = True
         self.CHUNK = 6400  # 语音一次读取的大小
         self.WIDTH = 1
@@ -65,6 +68,20 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.receive_audio_file_name = None
         self.send_wf = None
         self.receive_wf = None
+        # 设定定时器定时将语音数据存下来，清理缓冲区
+        self.write_audio_timer = QTimer(self)
+        self.write_audio_timer.timeout.connect(self.on_write_audio_timer)
+        self.write_audio_timer.start(2000)
+    def clearAudio(self):
+        if self.send_wf and self.send_audio_frames:
+            self.send_wf.writeframes(b"".join(self.send_audio_frames))
+            self.send_audio_frames.clear()
+        if self.receive_wf and self.receive_audio_frames:
+            self.receive_wf.writeframes(b"".join(self.receive_audio_frames))
+            self.receive_audio_frames.clear()
+
+    def on_write_audio_timer(self):
+        self.clearAudio()
 
     def my_callback(self, voice_data, frame_count, time_info, status):
         if voice_data is not None:
@@ -76,9 +93,8 @@ class VoiceDialog(QDialog, Ui_Dialog):
                 self.send_wf.setnchannels(self.CHANNELS)
                 self.send_wf.setsampwidth(pyaudio.PyAudio().get_sample_size(self.FORMAT))
                 self.send_wf.setframerate(self.RATE)
-                self.send_wf.writeframes(voice_data)
-            else:
-                self.send_wf.writeframes(voice_data)
+
+            self.send_audio_frames.append(voice_data)
             print('send before compress' + str(len(voice_data)))
             compress_voice_data = self.speexEncode.encode(voice_data)  # 使用speex库进行压缩
             print('send after compress' + str(len(compress_voice_data)))
@@ -105,13 +121,9 @@ class VoiceDialog(QDialog, Ui_Dialog):
                 self.receive_wf.setnchannels(self.CHANNELS)
                 self.receive_wf.setsampwidth(pyaudio.PyAudio().get_sample_size(self.FORMAT))
                 self.receive_wf.setframerate(self.RATE)
-                self.receive_wf.writeframes(voice_data)
-                with open(self.receive_audio_file_name, 'ab') as f:
-                         f.write(voice_data_bean.voice_data)
-            else:
-                self.receive_wf.writeframes(voice_data)
 
-        # print("shoudaohou" + str(len(voice_data)))
+            self.receive_audio_frames.append(voice_data)
+
         self.output_stream.write(voice_data)
 
     def on_reject_voice_r_signal(self):
@@ -127,20 +139,17 @@ class VoiceDialog(QDialog, Ui_Dialog):
         对方挂断了语音
         :return:
         '''
-        if self.input_stream is None:
-            self.status_label.setText("对方已挂断")
-            self.receive_audio_file_name = None
-            self.send_audio_file_name = None
-            self.receive_wf = None
-            self.send_wf = None
 
-        elif self.input_stream.is_active():
+        if self.input_stream and self.input_stream.is_active():
             self.input_stream.stop_stream()
-            self.status_label.setText("对方已挂断")
-            self.receive_audio_file_name = None
-            self.send_audio_file_name = None
-            self.receive_wf = None
-            self.send_wf = None
+        self.status_label.setText("对方已挂断")
+        self.receive_audio_file_name = None
+        self.send_audio_file_name = None
+        self.clearAudio()
+        self.receive_wf = None
+        self.send_wf = None
+
+
 
     def on_accept_voice_r_signal(self, addr):
         '''
@@ -172,18 +181,17 @@ class VoiceDialog(QDialog, Ui_Dialog):
                 other_device_name=self.device_name_label.text(),
                 time=datetime.now().strftime('%Y_%m_%d_%H_%M_%S')))
             print(self.receive_audio_file_name)
-    def closeEvent(self, QClosewEvent):
-        if self.input_stream is None:
-            self.receive_audio_file_name = None
-            self.send_audio_file_name = None
-            pass
-        elif self.input_stream.is_active():
-            self.input_stream.stop_stream()
-            reject_voice_apply_bean = RejectVoiceApplyBean()
-            reject_voice_apply_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
-            self.receive_audio_file_name = None
-            self.send_audio_file_name = None
 
+    def closeEvent(self, QClosewEvent):
+        if self.input_stream and self.input_stream.is_active():
+            self.input_stream.stop_stream()
+        reject_voice_apply_bean = RejectVoiceApplyBean()
+        reject_voice_apply_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
+        self.receive_audio_file_name = None
+        self.send_audio_file_name = None
+        self.clearAudio()
+        self.receive_wf = None
+        self.send_wf = None
         self.status_label.setText("等待拨号")
         self.device_ip_label.setText("")
         self.device_name_label.setText("")
