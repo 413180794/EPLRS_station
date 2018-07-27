@@ -142,7 +142,8 @@ class VoiceDialog(QDialog, Ui_Dialog):
 
         if self.input_stream and self.input_stream.is_active():
             self.input_stream.stop_stream()
-        self.status_label.setText("对方已挂断")
+        if self.status_label.text() == "正在通话":
+            self.status_label.setText("对方已挂断")
         self.receive_audio_file_name = None
         self.send_audio_file_name = None
         self.clearAudio()
