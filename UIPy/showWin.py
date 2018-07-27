@@ -150,13 +150,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "":
             QMessageBox.critical(self, "失败", "请选择对话的对象")
         else:
-            self.voice_dlg.device_name_label.setText(self.other_equip_id.text())
-            self.voice_dlg.device_ip_label.setText(self.other_equip_ip.text())
-            self.voice_dlg.start_voice_button.setVisible(True)
-            self.voice_dlg.close_button.setVisible(False)
-            self.voice_dlg.show()
-            self.voice_dlg.raise_()
-            self.voice_dlg.activateWindow()
+            if self.voice_dlg.isVisible():
+                self.voice_dlg.device_name_label.setText(self.other_equip_id.text())
+                self.voice_dlg.device_ip_label.setText(self.other_equip_ip.text())
+                self.voice_dlg.start_voice_button.setVisible(True)
+                self.voice_dlg.close_button.setVisible(False)
+                self.voice_dlg.show()
+                self.voice_dlg.raise_()
+                self.voice_dlg.activateWindow()
 
     @pyqtSlot()
     def on_send_file_button_clicked(self):
