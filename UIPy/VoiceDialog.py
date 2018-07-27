@@ -193,6 +193,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.clearAudio()
         self.receive_wf = None
         self.send_wf = None
+        self.ifanswer.stop()
         self.status_label.setText("等待拨号")
         self.device_ip_label.setText("")
         self.device_name_label.setText("")
