@@ -22,14 +22,11 @@ from PositionSuccessReceive import PositionSuccessReceive
 from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
-from property import Property
 from systemCheck import *
 from cat_net import get_net_data_num, convert_bytes_to_string
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
-# from ApplyMeasure import ApplyMeasure
-# from ApplyPosition import ApplyPosition
 from ChatDialog import ChatDialog
 from VoiceDialog import VoiceDialog
 from TimedMBox import TimedMBox
@@ -58,6 +55,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setWindowFlags(Qt.CustomizeWindowHint)
         # self.showFullScreen()
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
+        self.delay_time = 0
         self.apply = UDPProtocol(MainForm=self)
 
 
@@ -570,6 +568,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :return:
         '''
         # 如果需要添加属性，在property_json直接添加就可以了
+        if self.work_pattern_combox.currentText() == "高速双工":
+            self.delay_time = 0
+        elif self.work_pattern_combox.currentText() == "低速双工":
+            self.delay_time = 0.4
         property_json = {
             "width_band": self.width_band_combox.currentText(),
             "interval": self.interval_combox.currentText(),

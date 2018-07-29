@@ -1,5 +1,6 @@
 import functools
 import struct
+import time
 
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import threads
@@ -148,6 +149,7 @@ class UDPProtocol(DatagramProtocol):
     def send_apply(self, order, addr):
         logger.info(order)
         try:
+            time.sleep(self.MainForm.delay_time)
             self.transport.write(order, addr)
         except Exception as e:
             logger.error(e)
