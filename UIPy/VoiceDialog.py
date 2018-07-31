@@ -47,7 +47,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.receive_audio_frames = []
 
         self.ifremove_wav = True
-        self.CHUNK = 6400  # 语音一次读取的大小
+        self.CHUNK = 2560  # 语音一次读取的大小
         self.WIDTH = 1
         self.CHANNELS = 1
         self.RATE = 8000

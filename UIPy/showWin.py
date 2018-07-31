@@ -23,7 +23,7 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from systemCheck import *
-from cat_net import get_net_data_num, convert_bytes_to_string
+from cat_net import get_net_data_num, convert_bytes_to_string, control_net_speed
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
@@ -55,7 +55,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.setWindowFlags(Qt.CustomizeWindowHint)
         # self.showFullScreen()
         self.tabWidget.setCurrentWidget(self.MainWindow_tab)  # 先展示出主界面
-        self.delay_time = 0
         self.apply = UDPProtocol(MainForm=self)
 
 
@@ -88,13 +87,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.god_node_addr = (device_config['god_node_ip'], device_config['god_node_port'])  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
         reactor.listenUDP(self.MYPORT, self.apply)
+        self.interface = 'eth1'  # 网口名称
         self.property_save_button.clicked.emit()
 
         self.system_info_dlg = SystemInfoDialog(self)
         self.text_dlg = ChatDialog(self)
         self.voice_dlg = VoiceDialog(self)
         ##################定时查看网卡流量,两次只差计算网速###################
-        self.interface = 'eth1'  # 网口名称
+
         self.net_data_num_queue = queue.Queue(1)
         self.get_speed_timer = QTimer(self)
         self.get_speed_timer.timeout.connect(self.on_speed_timer)
@@ -569,9 +569,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         '''
         # 如果需要添加属性，在property_json直接添加就可以了
         if self.work_pattern_combox.currentText() == "高速双工":
-            self.delay_time = 0
+            control_net_speed(self.interface,"115kbit")
         elif self.work_pattern_combox.currentText() == "低速双工":
-            self.delay_time = 0.4
+            control_net_speed(self.interface,"3.84kbit")
         property_json = {
             "width_band": self.width_band_combox.currentText(),
             "interval": self.interval_combox.currentText(),

@@ -149,7 +149,6 @@ class UDPProtocol(DatagramProtocol):
     def send_apply(self, order, addr):
         logger.info(order)
         try:
-            time.sleep(self.MainForm.delay_time)
             self.transport.write(order, addr)
         except Exception as e:
             logger.error(e)
