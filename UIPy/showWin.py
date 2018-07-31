@@ -121,6 +121,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.property_path = os.path.join('property.json')
         self.apply_voice_signal.connect(self.on_apply_voice_signal)
 
+
+
     def on_clear_success_signal(self):
         QMessageBox.critical(self, "结果", "清除成功")
 

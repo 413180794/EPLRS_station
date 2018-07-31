@@ -43,6 +43,12 @@ class ChatDialog(QDialog, Ui_Dialog):
         # self.max_pic_size = 1024
         # self.pic_data_dict = {}  # 存放每一个文件的数据，用于解决接收udp顺序错误问题
 
+    @pyqtSlot()
+    def on_textEdit_textChanged(self):
+        x = self.textEdit.document().toPlainText()
+        if len(x.encode('utf8')) > 64:
+            self.textEdit.textCursor().deletePreviousChar()
+
     def on_change_other_ip_id(self, ip, device_name):
         self.other_device_ip.setText(ip)
         self.other_device_id.setText(device_name)
