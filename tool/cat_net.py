@@ -8,7 +8,8 @@ unit_ = ['B', 'KB', 'MB', 'GB', 'TB']
 password = 'ubuntu'
 def control_net_speed(interface, speed):
     command_del = 'sudo tc qdisc del dev {} root'.format(interface)
-    command = 'sudo tc qdisc add dev {} root tbf rate {} burst 2048kbit latency 400ms'.format(interface, speed)
+    command = 'sudo tc qdisc add dev {} root tbf rate {} burst {} latency 400ms'.format(interface, speed,speed)
+    print(command)
     spawn(command_del).sendline(password)
     spawn(command).sendline(password)
 

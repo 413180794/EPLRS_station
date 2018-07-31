@@ -16,7 +16,7 @@ class TextDataBean(object):
     device_category = typed_property("device_category", str)
     device_id = typed_property("device_id", int)
     data = typed_property("data", str)
-    typecode = '<16s16si1024s'
+    typecode = '<16s16si64s'
 
     def __init__(self, *, device_category, device_id, data):
         self.usage = "text_data"

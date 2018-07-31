@@ -95,13 +95,13 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.voice_dlg = VoiceDialog(self)
         ##################定时查看网卡流量,两次只差计算网速###################
 
-        self.net_data_num_queue = queue.Queue(1)
-        self.get_speed_timer = QTimer(self)
-        self.get_speed_timer.timeout.connect(self.on_speed_timer)
-        self.get_speed_timer.setInterval(5000)
-        net_data_num = get_net_data_num(self.interface)
-        self.net_data_num_queue.put(net_data_num)
-        self.get_speed_timer.start()
+        # self.net_data_num_queue = queue.Queue(1)
+        # self.get_speed_timer = QTimer(self)
+        # self.get_speed_timer.timeout.connect(self.on_speed_timer)
+        # self.get_speed_timer.setInterval(5000)
+        # net_data_num = get_net_data_num(self.interface)
+        # self.net_data_num_queue.put(net_data_num)
+        # self.get_speed_timer.start()
 
         # -----------------------定时查看cpu温度，显示在界面上-----------
 
@@ -356,24 +356,24 @@ class MainForm(QMainWindow, Ui_MainWindow):
         measure_recv_bean.send(self.apply, addr)
         self.measure_table.scrollToBottom()
 
-    def on_speed_timer(self):
-        '''
-        根据self.interface的网卡流量来计算当前的网速
-        :return:
-        '''
-        net_data_num = get_net_data_num(self.interface)
-        if net_data_num is None:
-            self.send_rate_show.setText("未连接")
-            if self.interface == "eth1":
-                self.interface = 'wlan0'
-            elif self.interface == "wlan0":
-                self.interface = 'eth1'
-        elif self.net_data_num_queue.full():
-            old_net_data_num = self.net_data_num_queue.get()
-            download_speed = (float(net_data_num) - float(old_net_data_num))
-            download_speed_str = convert_bytes_to_string(download_speed)
-            self.send_rate_show.setText(download_speed_str + "/s")
-            self.net_data_num_queue.put(net_data_num)
+    # def on_speed_timer(self):
+    #     '''
+    #     根据self.interface的网卡流量来计算当前的网速
+    #     :return:
+    #     '''
+    #     net_data_num = get_net_data_num(self.interface)
+    #     if net_data_num is None:
+    #         self.send_rate_show.setText("未连接")
+    #         if self.interface == "eth1":
+    #             self.interface = 'wlan0'
+    #         elif self.interface == "wlan0":
+    #             self.interface = 'eth1'
+    #     elif self.net_data_num_queue.full():
+    #         old_net_data_num = self.net_data_num_queue.get()
+    #         download_speed = (float(net_data_num) - float(old_net_data_num))
+    #         download_speed_str = convert_bytes_to_string(download_speed)
+    #         self.send_rate_show.setText(download_speed_str + "/s")
+    #         self.net_data_num_queue.put(net_data_num)
 
     def on_get_temperature_timer(self):
         '''

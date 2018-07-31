@@ -29,17 +29,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_4)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.__send_rate_main_label = QtWidgets.QLabel(self.verticalLayoutWidget_4)
-        self.__send_rate_main_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.__send_rate_main_label.setObjectName("__send_rate_main_label")
-        self.horizontalLayout_11.addWidget(self.__send_rate_main_label)
-        self.send_rate_show = QtWidgets.QLabel(self.verticalLayoutWidget_4)
-        self.send_rate_show.setAlignment(QtCore.Qt.AlignCenter)
-        self.send_rate_show.setObjectName("send_rate_show")
-        self.horizontalLayout_11.addWidget(self.send_rate_show)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.__position_label = QtWidgets.QLabel(self.verticalLayoutWidget_4)
@@ -320,14 +309,12 @@ class Ui_MainWindow(object):
         self.set_property.setObjectName("set_property")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.__send_rate_main_label.setText(_translate("MainWindow", "发送速率"))
-        self.send_rate_show.setText(_translate("MainWindow", "未连接"))
         self.__position_label.setText(_translate("MainWindow", "经度纬度高度"))
         self._temperature_label.setText(_translate("MainWindow", "温度"))
         self.temperature_show.setText(_translate("MainWindow", "0℃"))
