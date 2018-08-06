@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="resource">
+    <file>button_hui_celiang.png</file>
+    <file>button_hui_canshu.png</file>
+    <file>button_save_juhang.png</file>
+    <file>button_juhuang_save.png</file>
+    <file>button_hui_zuozhuan.png</file>
+    <file>button_hui_zijian.png</file>
+    <file>button_hui_zhihui.png</file>
+    <file>button_hui_xiangyouzhuan.png</file>
+    <file>button_hui_xianghouzhuan.png</file>
+    <file>button_hui_weizhi.png</file>
+    <file>button_hui_shuju.png</file>
+    <file>button_hui_qianjin.png</file>
+    <file>button_hui_peizhi.png</file>
+    <file>button_hui_fasongwenben.png</file>
+    <file>button_hui_fasongtupian.png</file>
+    <file>button_hui_canshu.png</file>
+    <file>button_hui_audio.png</file>
+    <file>button_guanbi.png</file>
+  </qresource>
+</RCC>

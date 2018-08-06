@@ -32,7 +32,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="MainWindow_tab">
      <attribute name="title">
@@ -318,8 +318,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="start_voice_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_audio.png);</string>
+         </property>
          <property name="text">
-          <string>话音交互</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -338,8 +353,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="send_file_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_zhihui.png);</string>
+         </property>
          <property name="text">
-          <string>指挥控制</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -358,8 +388,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="send_position_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_weizhi.png);</string>
+         </property>
          <property name="text">
-          <string>位置报告</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -378,8 +423,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="send_measure_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_celiang.png);</string>
+         </property>
          <property name="text">
-          <string>测量报告</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -398,8 +458,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="clear_device_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_canshu.png);</string>
+         </property>
          <property name="text">
-          <string>参数清除</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -418,8 +493,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="system_check_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_zijian.png);</string>
+         </property>
          <property name="text">
-          <string>系统自检</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -438,8 +528,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="set_property_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_hui_peizhi.png);</string>
+         </property>
          <property name="text">
-          <string>配置属性</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -746,8 +851,23 @@
        </item>
        <item>
         <widget class="QPushButton" name="property_save_button">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-image: url(:/resource/button_juhuang_save.png);</string>
+         </property>
          <property name="text">
-          <string>保存</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -762,6 +882,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resource/DTresource.qrc"/>
+ </resources>
  <connections/>
 </ui>
