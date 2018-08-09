@@ -10,7 +10,7 @@ from datetime import datetime
 sys.path.append(os.path.abspath('../tool'))
 sys.path.append(os.path.abspath("../Bean"))
 sys.path.append(os.path.abspath("../UDPChat"))
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt, QTimer
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt, QTimer, QTextStream, QFile
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QHeaderView, QTableWidgetItem
 from PyQt5.QtCore import QCoreApplication
 from ApplyForNetBean import ApplyForNetBean
@@ -683,6 +683,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
             s.close()
         return ip
 
+def getstylesheetfromQss(qss_path):
+    file = QFile(qss_path)
+    file.open(QFile.ReadOnly)
+    ts = QTextStream(file)
+    stylesheet = ts.readAll()
+    return stylesheet
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -693,5 +699,11 @@ if __name__ == '__main__':
 
     reactor.suggestThreadPoolSize(30)
     win = MainForm()
+    stylesheet = getstylesheetfromQss('../Qss/BlueGlass/blueglass.qss')
+    win.setStyleSheet(stylesheet)
+    win.voice_dlg.setStyleSheet(stylesheet)
+    win.text_dlg.setStyleSheet(stylesheet)
+    win.system_info_dlg.setStyleSheet(stylesheet)
+
     win.show()
     reactor.run()

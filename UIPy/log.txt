@@ -9,3 +9,8 @@
 2018-06-12 16:18:45,566 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_recv_handle'
 2018-06-12 16:19:23,767 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'position_recv_handle'
 2018-06-12 16:19:25,659 - UDPProtocol.py - ERROR -29 - 'UDPProtocol' object has no attribute 'measure_recv_handle'
+2018-08-08 13:04:17,993 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
+2018-08-08 13:06:03,097 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
+2018-08-08 13:07:35,091 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
+2018-08-08 13:09:46,698 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
+2018-08-08 13:12:08,269 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
