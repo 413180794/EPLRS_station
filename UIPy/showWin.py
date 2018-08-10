@@ -707,7 +707,8 @@ if __name__ == '__main__':
 
     reactor.suggestThreadPoolSize(30)
     win = MainForm()
-    stylesheet = getstylesheetfromQss('../Qss/Wombat/stylesheet.qss')
+    import DTresource_rc
+    stylesheet = getstylesheetfromQss(':resource/Wombat/stylesheet.qss')
     win.setStyleSheet(stylesheet)
     win.voice_dlg.setStyleSheet(stylesheet)
     win.text_dlg.setStyleSheet(stylesheet)

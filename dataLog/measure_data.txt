@@ -186,3 +186,4 @@ send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_
 receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
 send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   0.0
 receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
+send measure_data-->[2018-08-10 13:25:39]:Eplrs_t_r_0(192.168.0.105)-->Eplrs_t_r_0(192.168.0.106):   0.0

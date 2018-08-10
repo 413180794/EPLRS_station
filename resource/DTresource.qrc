@@ -1,5 +1,13 @@
 <RCC>
   <qresource prefix="resource">
+    <file>Wombat/stylesheet.qss</file>
+    <file>Wombat/icons/caret-down_ffffff_14.png</file>
+    <file>Wombat/icons/caret-right_ffffff_14.png</file>
+    <file>Wombat/icons/check.png</file>
+    <file>Wombat/icons/cross.svg</file>
+    <file>Wombat/icons/down_arrow.png</file>
+    <file>Wombat/icons/eye.svg</file>
+    <file>Wombat/icons/eye-blocked.svg</file>
     <file>zhihui.png</file>
     <file>measure.png</file>
     <file>gps.png</file>
