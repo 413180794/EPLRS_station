@@ -73,7 +73,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.device_id = device_config['device_id']
         self.device_category = device_config['device_category']
         self.MYPORT = device_config['my_port']
-        self.device_name = self.device_category + "_" + str(self.device_id)
+        self.device_name = self.device_category.split('.')[-1] + "_" + str(self.device_id)
         self.device_ip = self.get_host_ip()
         self.measure_data_path = os.path.join("..", "dataLog", "measure_data.txt")
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
