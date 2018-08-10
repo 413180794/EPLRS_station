@@ -54,6 +54,14 @@ class ApplyForNetBean:
         bytes_data = [encode_(m) for m in self]
         return struct.pack(typecode, *bytes_data)
 
+    @property
+    def device_name(self):
+        return self.device_category.split(".")[-1] + "_" + str(self.device_id)
+
+    @property
+    def ziwang_name(self):
+        return self.device_category.split('.')[-2]
+
     @classmethod
     def frombytes(cls, bytes_data):
         memv = memoryview(bytes_data)

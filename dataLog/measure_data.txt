@@ -178,3 +178,11 @@ send measure_data-->[2018-08-10 12:39:12]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_
 receive txt-->[2018-08-10 12:39:12]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
 send measure_data-->[2018-08-10 12:40:48]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   27.8
 receive txt-->[2018-08-10 12:40:48]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   27.8
+send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   0.0
+receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
+send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   0.0
+receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
+send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   0.0
+receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0
+send measure_data-->[2018-08-10 13:01:15]:Real.Eplrs_t_r_0(192.168.0.105)-->mse_t_v_23(127.0.0.1):   0.0
+receive txt-->[2018-08-10 13:01:15]:Eplrs_t_r_0(127.0.0.1)-->Real.Eplrs_t_r_0(192.168.0.105):   0.0

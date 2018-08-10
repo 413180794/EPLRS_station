@@ -39,7 +39,7 @@ class PositionDataBean:
 
     @property
     def ziwang_name(self):
-        return self.device_category.split(".")[-2]
+        return self.device_category.split('.')[-2]
 
     def __bytes__(self, typecode=typecode):
         bytes_data = [encode_(m) for m in self]

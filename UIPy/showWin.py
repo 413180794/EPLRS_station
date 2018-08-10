@@ -653,8 +653,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.voice_dlg.show()
             self.voice_dlg.raise_()
             self.voice_dlg.activateWindow()
-            result = TimedMBox.question(title="请求通话", text=apply_voice_bean.device_category + "_" + str(
-                apply_voice_bean.device_id) + "请求通话" + "\n" + "是否同意？")
+            result = TimedMBox.question(title="请求通话", text=apply_voice_bean.device_name+ "请求通话" + "\n" + "是否同意？")
 
             # 上述会定时10秒
             # result = QMessageBox.question(self.voice_dlg,
