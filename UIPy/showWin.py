@@ -77,11 +77,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.device_ip = self.get_host_ip()
         self.measure_data_path = os.path.join("..", "dataLog", "measure_data.txt")
         self.position_data_path = os.path.join("..", "dataLog", "position_data.txt")
-        self.ip_id_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP"])
+        self.ip_id_table.setHorizontalHeaderLabels(["所属子网","设备类型", "设备ID", "设备IP"])
         self.ip_id_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.position_table.setHorizontalHeaderLabels(["设备类型", "设备ID", "设备IP", "经度", "纬度", "高度"])
+        self.position_table.setHorizontalHeaderLabels(["所属子网","设备类型", "设备ID", "设备IP", "经度", "纬度", "高度"])
         self.position_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.measure_table.setHorizontalHeaderLabels(["设备类型", '设备ID', '设备IP', '温度'])
+        self.measure_table.setHorizontalHeaderLabels(["所属子网","设备类型", '设备ID', '设备IP', '温度'])
         self.measure_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.god_node_addr = (device_config['god_node_ip'], device_config['god_node_port'])  # 上帝节点的地址
@@ -280,7 +280,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :return:
         '''
         position_bean = PositionDataBean.frombytes(datagram)
-        # 记录收到位置数据
+        # 记录收到位置数据i
         with open(self.position_data_path, 'a', encoding='utf-8') as f:
             f.write(
                 "receive position_data-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
@@ -295,13 +295,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
         position_recv_bean = PositionSuccessReceive.frombytes()
 
         table_item = [QTableWidgetItem(x) for x in
-                      [position_bean.device_kind(), position_bean.device_name,
+                      [position_bean.ziwang_name,position_bean.device_kind(), position_bean.device_name,
                        addr[0],
                        "{:.3f}°".format(position_bean.position_x),
                        "{:.3f}°".format(position_bean.position_y),
                        "{:.3f}km".format(position_bean.position_z)
                        ]]
-        updateList = self.position_table.findItems(position_bean.device_name, Qt.MatchContains)
+        for setItem in table_item:
+            setItem.setTextAlignment(Qt.AlignCenter)
+            setItem.setToolTip(setItem.text())
+        updateList = self.position_table.findItems(position_bean.device_name, Qt.MatchFixedString)
 
         if len(updateList) == 0:
             self.position_table.insertRow(self.position_table.rowCount())
@@ -338,10 +341,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
             )
         measure_recv_bean = MeasureSuccessReceive.frombytes()
         table_item = [QTableWidgetItem(x) for x in
-                      [measure_bean.device_kind(), measure_bean.device_category + "_" + str(measure_bean.device_id),
+                      [measure_bean.ziwang_name,measure_bean.device_kind(), measure_bean.device_name,
                        addr[0],
                        str(measure_bean.temperature) + "℃"]]
-
+        for setItem in table_item:
+            setItem.setTextAlignment(Qt.AlignCenter)
+            setItem.setToolTip(setItem.text())
         updateList = self.measure_table.findItems(measure_bean.device_name, Qt.MatchFixedString)
 
         if len(updateList) == 0:
@@ -425,6 +430,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "失败", "请选择报告的对象")
         else:
             position_x, position_y, position_z = eval(self.position_show.text().replace("°", "").replace("km", ""))
+
+            print(self.device_category)
             bean = PositionDataBean(device_category=self.device_category, device_id=self.device_id,
                                     position_x=position_x, position_y=position_y, position_z=position_z)
             bean.send(self.apply, (self.other_equip_ip.text().strip(), self.MYPORT))
@@ -469,8 +476,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :param colmn:
         :return:
         '''
-        device_ip = self.ip_id_table.item(row, 2).text()  # 获得该行中的ip地址
-        device_id = self.ip_id_table.item(row, 1).text()  # 获得该行中的i
+        device_ip = self.ip_id_table.item(row, 3).text()  # 获得该行中的ip地址
+        device_id = self.ip_id_table.item(row, 2).text()  # 获得该行中的i
         self.other_equip_id.setText(device_id)
         self.other_equip_ip.setText(device_ip)
 
@@ -486,18 +493,17 @@ class MainForm(QMainWindow, Ui_MainWindow):
         ip_id_list = str(ip_comma_interval).split(",")
         for ip_id in ip_id_list:
             ip = ip_id.split(":")[0]
-            id = ip_id.split(":")[1]
+            id = ip_id.split(":")[1].split('.')[-1]
+            ziwang = ip_id.split(":")[1].split(".")[-2]
             id_item = QTableWidgetItem(id)
             ip_item = QTableWidgetItem(ip)
-            id_item.setTextAlignment(Qt.AlignCenter)
-            ip_item.setTextAlignment(Qt.AlignCenter)
+            ziwang_item = QTableWidgetItem(ziwang)
             if "r" == id.split("_")[-2]:
                 kind = "模拟电台"
             else:
                 kind = "虚拟电台"
             kind_item = QTableWidgetItem(kind)
-            kind_item.setTextAlignment(Qt.AlignCenter)
-            yield [kind_item, id_item, ip_item]
+            yield [ziwang_item,kind_item, id_item, ip_item]
 
     def insert_data_to_ip_id_table(self, data):
         '''
@@ -528,6 +534,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         reply_for_net_success_obj = NetSuccessBean.frombytes(datagram)
         ip_comma_interval = reply_for_net_success_obj.ip_list
         for data in self.ip_id_list_to_many_one_line(ip_comma_interval):
+            for setdata in data:
+                setdata.setTextAlignment(Qt.AlignCenter)
+                setdata.setToolTip(setdata.text())
             self.insert_data_to_ip_id_table(data)
         self.if_connected_main.setText("成功入网")
         # QMessageBox.about(self, "入网成功", "入网成功")
@@ -699,7 +708,7 @@ if __name__ == '__main__':
 
     reactor.suggestThreadPoolSize(30)
     win = MainForm()
-    stylesheet = getstylesheetfromQss('../Qss/BlueGlass/blueglass.qss')
+    stylesheet = getstylesheetfromQss('../Qss/Wombat/stylesheet.qss')
     win.setStyleSheet(stylesheet)
     win.voice_dlg.setStyleSheet(stylesheet)
     win.text_dlg.setStyleSheet(stylesheet)

@@ -1,22 +1,18 @@
 <RCC>
   <qresource prefix="resource">
-    <file>button_hui_celiang.png</file>
-    <file>button_hui_canshu.png</file>
+    <file>zhihui.png</file>
+    <file>measure.png</file>
+    <file>gps.png</file>
     <file>button_save_juhang.png</file>
-    <file>button_juhuang_save.png</file>
-    <file>button_hui_zuozhuan.png</file>
-    <file>button_hui_zijian.png</file>
-    <file>button_hui_zhihui.png</file>
-    <file>button_hui_xiangyouzhuan.png</file>
-    <file>button_hui_xianghouzhuan.png</file>
-    <file>button_hui_weizhi.png</file>
-    <file>button_hui_shuju.png</file>
-    <file>button_hui_qianjin.png</file>
-    <file>button_hui_peizhi.png</file>
-    <file>button_hui_fasongwenben.png</file>
-    <file>button_hui_fasongtupian.png</file>
-    <file>button_hui_canshu.png</file>
-    <file>button_hui_audio.png</file>
-    <file>button_guanbi.png</file>
+    <file>telephone1.png</file>
+    <file>setting1.png</file>
+    <file>delete1.png</file>
+    <file>checking1.png</file>
+    <file>chat1.png</file>
+    <file>telephone.png</file>
+    <file>setting.png</file>
+    <file>delete.png</file>
+    <file>checking.png</file>
+    <file>chat.png</file>
   </qresource>
 </RCC>
