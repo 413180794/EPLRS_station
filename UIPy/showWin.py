@@ -1,7 +1,6 @@
 # conding:utf-8
 import json
 import os
-import queue
 import shutil
 import socket
 import sys
@@ -23,7 +22,7 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from systemCheck import *
-from cat_net import get_net_data_num, convert_bytes_to_string, control_net_speed
+from cat_net import control_net_speed
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
@@ -690,14 +689,42 @@ class MainForm(QMainWindow, Ui_MainWindow):
         finally:
             s.close()
         return ip
+
     @pyqtSlot()
     def on_reset_button_clicked(self):
-        self.interval_combox.setCurrentIndex(0)
-        self.routing_parameters_combox.setCurrentIndex(0)
-        self.width_band_combox.setCurrentIndex(0)
-        self.signal_number_combox.setCurrentIndex(0)
-        self.signal_structure_combox.setCurrentIndex(0)
-        self.work_pattern_combox.setCurrentIndex(0)
+        reply = QMessageBox.question(self, "参数清除", "是否确认回复出厂设置",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        elif reply == QMessageBox.Yes:
+            self.interval_combox.setCurrentIndex(0)
+            self.routing_parameters_combox.setCurrentIndex(0)
+            self.width_band_combox.setCurrentIndex(0)
+            self.signal_number_combox.setCurrentIndex(0)
+            self.modulation_mode_combox.setCurrentIndex(0)
+            self.signal_structrue_combox.setCurrentIndex(0)
+            shutil.rmtree(self.dataLog_path)
+            shutil.rmtree(self.saveImage2_path)
+            shutil.rmtree(self.saveImage_path)
+            shutil.rmtree(self.saveAudio_path)
+            os.mkdir(self.dataLog_path)
+            os.mkdir(self.saveImage2_path)
+            os.mkdir(self.saveImage_path)
+            os.mkdir(self.saveAudio_path)
+
+    @pyqtSlot()
+    def on_update_system_button_clicked(self):
+        reply = QMessageBox.question(self, "参数清除", "是否确认升级软件",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        elif reply == QMessageBox.Yes:
+            os.chdir("..")
+            os.popen("git fetch --all")
+            os.popen("git reset --hard origin/master")
+            x = os.popen("git pull").read()
+            os.chdir("./UIPy")
+            QMessageBox.critical(self, "升级信息", x)
 
 
 def getstylesheetfromQss(qss_path):
@@ -716,7 +743,6 @@ if __name__ == '__main__':
 
     reactor.suggestThreadPoolSize(30)
     win = MainForm()
-    import DTresource_rc
     stylesheet = getstylesheetfromQss('../Qss/Dark/darkstyle.qss')
     win.setStyleSheet(stylesheet)
     win.voice_dlg.setStyleSheet(stylesheet)

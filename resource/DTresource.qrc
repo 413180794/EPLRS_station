@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="resource">
+    <file>DTresource.qrc</file>
+    <file>reset.png</file>
+    <file>update.png</file>
     <file>Wombat/stylesheet.qss</file>
     <file>Wombat/icons/caret-down_ffffff_14.png</file>
     <file>Wombat/icons/caret-right_ffffff_14.png</file>
