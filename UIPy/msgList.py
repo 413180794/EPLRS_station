@@ -58,16 +58,16 @@ class BubbleText(QLabel):
 
         self.setMinimumWidth(self.minW)
         self.setFont(QFont("Times", 15, QFont.Normal))
-        # self.setStyleSheet("QLabel:hover{background-color:rgba(210,240,250,255);}")#鼠标滑过的颜色设置，这样自定义的paintEvent绘图区域就被看穿了
+        self.setStyleSheet("QLabel{color:#242424;background-color:#201F1F}")#鼠标滑过的颜色设置，这样自定义的paintEvent绘图区域就被看穿了
         self.setState(False)  # 设置鼠标不进入状态，方便绘图区域的颜色更新
 
         self.lr = lr  # 标志绘制左还是右
         if self.lr:
             '''为了让实现显示的图片不会在super(BubbleImage, self).paintEvent(e)时和绘制的背景气泡冲突，
             设置控件的setContentsMargins绘图范围保证图像的绘图区域。'''
-            self.setContentsMargins(self.trigon * sqrt(3) / 2 + 3, self.border + 3, self.border + 3, self.border + 3)
+            self.setContentsMargins(int(self.trigon * sqrt(3) / 2 + 3), self.border + 3, self.border + 3, self.border + 3)
         else:
-            self.setContentsMargins(self.border + 3, self.border + 3, self.trigon * sqrt(3) / 2 + 3, self.border + 3)
+            self.setContentsMargins(self.border + 3, self.border + 3, int(self.trigon * sqrt(3) / 2 + 3), self.border + 3)
 
     def paintEvent(self, e):
         size = self.size()
@@ -83,6 +83,7 @@ class BubbleText(QLabel):
     def leftBubble(self, qp, w, h):
         qp.setPen(self.colorLeftE)  # 设置画笔颜色，绘制的矩形边缘颜色
         qp.setBrush(self.colorLeftM)  # 设置红色的笔刷
+        # qp.setBrush(QColor("#242424"))
         middle = h / 2
         shifty = self.trigon / 2
         shiftx = self.trigon * sqrt(3) / 2
@@ -116,11 +117,13 @@ class BubbleText(QLabel):
         '''鼠标进入和鼠标出时需要显示不一样的效果，主要就是更新颜色变量，然后调用update更新重绘'''
         if mouse:  # 鼠标进入
             self.colorLeftM = QColor("#eaeaea")
+            # self.colorLeftM = QColor("#242424")
             self.colorLeftE = QColor("#D6D6D6")
             self.colorRightM = QColor("#8FD648")
             self.colorRightE = QColor("#85AF65")
         else:
             self.colorLeftM = QColor("#fafafa")
+            # self.colorLeftM = QColor("#242424")
             self.colorLeftE = QColor("#D6D6D6")
             self.colorRightM = QColor("#9FE658")
             self.colorRightE = QColor("#85AF65")
@@ -171,6 +174,7 @@ class LabelHead(QLabel):
         self.setScaledContents(True)
         self.setReadOnly(True)
         # self.setPicture(addr)
+        self.setStyleSheet("QLabel{background-color:#201F1F}")
         self.setDeviceName(device_name)
     def setReadOnly(self, b):
         self._readOnly = bool(b)
@@ -246,9 +250,9 @@ class BubbleImage(QLabel):
 
         self.lr = lr  # 标志绘制左还是右
         if self.lr:
-            self.setContentsMargins(self.trigon * sqrt(3) / 2 + 3, self.border + 3, self.border + 3, self.border + 3)
+            self.setContentsMargins(int(self.trigon * sqrt(3) / 2 + 3), self.border + 3, self.border + 3, self.border + 3)
         else:
-            self.setContentsMargins(self.border + 3, self.border + 3, self.trigon * sqrt(3) / 2 + 3, self.border + 3)
+            self.setContentsMargins(self.border + 3, self.border + 3, int(self.trigon * sqrt(3) / 2 + 3), self.border + 3)
 
         self.setScaledContents(True)
         if not os.path.exists(img):

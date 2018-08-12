@@ -690,6 +690,15 @@ class MainForm(QMainWindow, Ui_MainWindow):
         finally:
             s.close()
         return ip
+    @pyqtSlot()
+    def on_reset_button_clicked(self):
+        self.interval_combox.setCurrentIndex(0)
+        self.routing_parameters_combox.setCurrentIndex(0)
+        self.width_band_combox.setCurrentIndex(0)
+        self.signal_number_combox.setCurrentIndex(0)
+        self.signal_structure_combox.setCurrentIndex(0)
+        self.work_pattern_combox.setCurrentIndex(0)
+
 
 def getstylesheetfromQss(qss_path):
     file = QFile(qss_path)
