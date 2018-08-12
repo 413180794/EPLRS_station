@@ -115,8 +115,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.clear_device_signal.connect(self.on_clear_device_signal)
         # self.saveImage_path = os.path.join('..', 'saveImage')
         # self.saveImage2_path = os.path.join('..', 'saveImage2')
-        # self.saveAudio_path = os.path.join('..', 'saveAudio')
+        self.saveAudio_path = os.path.join('..', 'saveAudio')
         self.dataLog_path = os.path.join('..', 'dataLog')
+
         self.property_path = os.path.join('property.json')
         self.apply_voice_signal.connect(self.on_apply_voice_signal)
 
@@ -701,15 +702,11 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.routing_parameters_combox.setCurrentIndex(0)
             self.width_band_combox.setCurrentIndex(0)
             self.signal_number_combox.setCurrentIndex(0)
-            self.signal_structrue_combox.setCurrentIndex(0)
+            self.signal_structure_combox.setCurrentIndex(0)
             self.work_pattern_combox.setCurrentIndex(0)
             shutil.rmtree(self.dataLog_path)
-            shutil.rmtree(self.saveImage2_path)
-            shutil.rmtree(self.saveImage_path)
             shutil.rmtree(self.saveAudio_path)
             os.mkdir(self.dataLog_path)
-            os.mkdir(self.saveImage2_path)
-            os.mkdir(self.saveImage_path)
             os.mkdir(self.saveAudio_path)
 
     @pyqtSlot()
