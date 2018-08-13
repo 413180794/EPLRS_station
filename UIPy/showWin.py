@@ -23,7 +23,7 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from systemCheck import *
-from cat_net import control_net_speed, get_net_data_num
+from cat_net import control_net_speed, get_net_data_num, convert_bytes_to_string
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
