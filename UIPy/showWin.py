@@ -87,7 +87,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.god_node_addr = (device_config['god_node_ip'], device_config['god_node_port'])  # 上帝节点的地址
         self.not_read_msg_count = 0  # 未读消息计数
         reactor.listenUDP(self.MYPORT, self.apply)
-        self.interface = 'eth1'  # 网口名称
+        self.interface = 'eth0'  # 网口名称
         self.property_save_button.clicked.emit()
 
         self.system_info_dlg = SystemInfoDialog(self)
@@ -372,10 +372,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         net_data_num = get_net_data_num(self.interface)
         if net_data_num is None:
             self.send_rate_show.setText("未连接")
-            if self.interface == "eth1":
+            if self.interface == "eth0":
                 self.interface = 'wlan0'
             elif self.interface == "wlan0":
-                self.interface = 'eth1'
+                self.interface = 'eth0'
         elif self.net_data_num_queue.full():
             old_net_data_num = self.net_data_num_queue.get()
             download_speed = (float(net_data_num) - float(old_net_data_num))

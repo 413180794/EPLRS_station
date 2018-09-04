@@ -1,6 +1,6 @@
 {
   "device_id": 0,
-  "device_category": "Real.Eplrs_t_r",
+  "device_category": "Real.eplrs_t_r",
   "my_port": 12345,
   "god_node_ip":"192.168.70.100",
   "god_node_port":12345

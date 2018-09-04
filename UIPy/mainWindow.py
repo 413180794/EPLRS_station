@@ -485,7 +485,7 @@ class Ui_MainWindow(object):
         self.set_property.setObjectName("set_property")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -523,8 +523,8 @@ class Ui_MainWindow(object):
         self.signal_structure_combox.setItemText(1, _translate("MainWindow", "扩频"))
         self.signal_structure_combox.setItemText(2, _translate("MainWindow", "跳扩"))
         self._work_pattern_label.setText(_translate("MainWindow", "工作模式"))
-        self.work_pattern_combox.setItemText(0, _translate("MainWindow", "低速双工"))
-        self.work_pattern_combox.setItemText(1, _translate("MainWindow", "高速双工"))
+        self.work_pattern_combox.setItemText(0, _translate("MainWindow", "低速双工(20bps~3840bps)"))
+        self.work_pattern_combox.setItemText(1, _translate("MainWindow", "高速双工(38.4kbps~115kbps)"))
         self.__width_band_label.setText(_translate("MainWindow", "频率间隔"))
         self.width_band_combox.setCurrentText(_translate("MainWindow", "225MHz~512MHz"))
         self.width_band_combox.setItemText(0, _translate("MainWindow", "225MHz~512MHz"))

@@ -32,7 +32,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="MainWindow_tab">
      <attribute name="title">
@@ -886,12 +886,12 @@
           <widget class="QComboBox" name="work_pattern_combox">
            <item>
             <property name="text">
-             <string>低速双工</string>
+             <string>低速双工(20bps~3840bps)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>高速双工</string>
+             <string>高速双工(38.4kbps~115kbps)</string>
             </property>
            </item>
           </widget>
