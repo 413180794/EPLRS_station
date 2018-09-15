@@ -103,6 +103,9 @@ class VoiceDialog(QDialog, Ui_Dialog):
             #         f.write(voice_data)
 
             device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
+            if not str(device_id).isdigit():
+                device_id = 0
+                device_category = self.device_name_label.text()
             voice_data_bean = VoiceDataBean(device_category=device_category, device_id=int(device_id),
                                             voice_data=compress_voice_data)
 
@@ -222,6 +225,9 @@ class VoiceDialog(QDialog, Ui_Dialog):
         device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
         # print(device_category)
         # print(device_id)
+        if not str(device_id).isdigit():
+            device_id = 0
+            device_category = self.device_name_label.text()
         bean = ApplyForVoiceBean(
             device_category=device_category,
             device_id=int(device_id),
