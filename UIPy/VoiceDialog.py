@@ -8,8 +8,6 @@ from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal
 from PyQt5.QtWidgets import QDialog, QMessageBox
 import sys
 
-
-
 sys.path.append(os.path.abspath("../Bean"))
 from AcceptVoiceReplyBean import AcceptVoiceReplyBean
 from ApplyForVoiceBean import ApplyForVoiceBean
@@ -18,6 +16,7 @@ from VoiceDataBean import VoiceDataBean
 from voiceWindows import Ui_Dialog
 import speex
 from mylogging import logger
+
 
 # linux与mac交互测试成功。目前来说还有一些小问题，不应该自己给自己发送语音。要限制这种行为
 
@@ -36,7 +35,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.reject_voice_a_signal.connect(self.on_reject_voice_a_signal)
         self.accept_voice_r_signal.connect(self.on_accept_voice_r_signal)
         self.voice_data_signal.connect(self.on_voice_data_signal)
-        self.audio_save_path = os.path.join("..","saveAudio")
+        self.audio_save_path = os.path.join("..", "saveAudio")
         self.ifanswer = QTimer(self)  # 一次性定时器，判断10秒后正在建立连接状态是否改变，对方有无应答
         self.ifanswer.timeout.connect(self.no_anwser)
         self.ifanswer.setSingleShot(True)
@@ -72,6 +71,7 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.write_audio_timer = QTimer(self)
         self.write_audio_timer.timeout.connect(self.on_write_audio_timer)
         self.write_audio_timer.start(2000)
+
     def clearAudio(self):
         if self.send_wf and self.send_audio_frames:
             self.send_wf.writeframes(b"".join(self.send_audio_frames))
@@ -102,11 +102,12 @@ class VoiceDialog(QDialog, Ui_Dialog):
             #     with open(self.send_audio_file_name, 'ab') as f:
             #         f.write(voice_data)
 
-            device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
-            if not str(device_id).isdigit():
-                device_id = 0
-                device_category = self.device_name_label.text()
-            voice_data_bean = VoiceDataBean(device_category=device_category, device_id=int(device_id),
+            # device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
+            # if not str(device_id).isdigit():
+            #     device_id = 0
+            #     device_category = self.device_name_label.text()
+            voice_data_bean = VoiceDataBean(device_category=self.MainForm.device_category,
+                                            device_id=int(self.MainForm.device_id),
                                             voice_data=compress_voice_data)
 
             voice_data_bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
@@ -153,8 +154,6 @@ class VoiceDialog(QDialog, Ui_Dialog):
         self.receive_wf = None
         self.send_wf = None
 
-
-
     def on_accept_voice_r_signal(self, addr):
         '''
         对方允许语音请求，,而且当前处于正在拨号的状态，向对方发送语音,
@@ -177,13 +176,15 @@ class VoiceDialog(QDialog, Ui_Dialog):
                     stream_callback=self.my_callback
                 )
             self.input_stream.start_stream()
-            self.send_audio_file_name = os.path.join(self.audio_save_path,"{time}_send_to_{other_device_name}.wav".format(
-                other_device_name=self.device_name_label.text(),
-                time=datetime.now().strftime('%Y_%m_%d_%H_%M_%S')))
+            self.send_audio_file_name = os.path.join(self.audio_save_path,
+                                                     "{time}_send_to_{other_device_name}.wav".format(
+                                                         other_device_name=self.device_name_label.text(),
+                                                         time=datetime.now().strftime('%Y_%m_%d_%H_%M_%S')))
 
-            self.receive_audio_file_name = os.path.join(self.audio_save_path,"{time}_receive_from_{other_device_name}.wav".format(
-                other_device_name=self.device_name_label.text(),
-                time=datetime.now().strftime('%Y_%m_%d_%H_%M_%S')))
+            self.receive_audio_file_name = os.path.join(self.audio_save_path,
+                                                        "{time}_receive_from_{other_device_name}.wav".format(
+                                                            other_device_name=self.device_name_label.text(),
+                                                            time=datetime.now().strftime('%Y_%m_%d_%H_%M_%S')))
             print(self.receive_audio_file_name)
 
     def closeEvent(self, QClosewEvent):
@@ -222,15 +223,15 @@ class VoiceDialog(QDialog, Ui_Dialog):
             状态变为正在建立连接，并创建回调，10秒后判断状态是否已经改变，如果没有，状态切换未对方无应答，
         :return:
         '''
-        device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
+        # device_category, device_id = self.device_name_label.text().rsplit("_", maxsplit=1)
         # print(device_category)
         # print(device_id)
-        if not str(device_id).isdigit():
-            device_id = 0
-            device_category = self.device_name_label.text()
+        # if not str(device_id).isdigit():
+        #     device_id = 0
+        #     device_category = self.device_name_label.text()
         bean = ApplyForVoiceBean(
-            device_category=device_category,
-            device_id=int(device_id),
+            device_category=self.MainForm.device_category,
+            device_id=int(self.MainForm.device_id),
         )
         bean.send(self.MainForm.apply, (self.device_ip_label.text(), self.MainForm.MYPORT))
         self.close_button.setVisible(True)
