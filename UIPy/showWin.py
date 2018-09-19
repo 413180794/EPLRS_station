@@ -499,7 +499,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
             id_item = QTableWidgetItem(id)
             ip_item = QTableWidgetItem(ip)
             ziwang_item = QTableWidgetItem(ziwang)
-            if "r" == id.split("_")[-2]:
+            if ziwang == "Real":
                 kind = "模拟电台"
             else:
                 kind = "虚拟电台"
