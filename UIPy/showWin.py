@@ -93,6 +93,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.system_info_dlg = SystemInfoDialog(self)
         self.text_dlg = ChatDialog(self)
         self.voice_dlg = VoiceDialog(self)
+        self.system_info_dlg.setWindowModality(Qt.ApplicationModal)
+        self.text_dlg.setWindowModality(Qt.ApplicationModal)
+        self.voice_dlg.setWindowModality(Qt.ApplicationModal)
         ##################定时查看网卡流量,两次只差计算网速###################
 
         self.net_data_num_queue = queue.Queue(1)
