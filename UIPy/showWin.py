@@ -729,6 +729,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if reply == QMessageBox.No:
             return
         elif reply == QMessageBox.Yes:
+            shutil.rmtree(self.dataLog_path)
             os.chdir("..")
             os.popen("git fetch --all")
             os.popen("git reset --hard origin/master")
