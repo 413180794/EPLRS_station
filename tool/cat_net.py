@@ -12,7 +12,9 @@ def control_net_speed(interface, speed):
     print(command)
     spawn(command_del).sendline(password)
     spawn(command).sendline(password)
-
+def shut_down():
+    command = "sudo init 0"
+    spawn(command).sendline(password)
 
 def get_net_data(interface):
     if not os.path.exists('/proc/net/dev'):

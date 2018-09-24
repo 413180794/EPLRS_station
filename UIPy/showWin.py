@@ -23,7 +23,7 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from systemCheck import *
-from cat_net import control_net_speed, get_net_data_num, convert_bytes_to_string
+from cat_net import control_net_speed, get_net_data_num, convert_bytes_to_string, shut_down
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
@@ -147,6 +147,15 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     content=bean
                 )
             )
+
+    @pyqtSlot()
+    def on_shut_down_button_clicked(self):
+        reply = QMessageBox.question(self, "关机", "是否确认关机",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        elif reply == QMessageBox.Yes:
+            shut_down()
 
     @pyqtSlot()
     def on_start_voice_button_clicked(self):

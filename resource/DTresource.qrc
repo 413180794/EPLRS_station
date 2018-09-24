@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="resource">
+    <file>关机.png</file>
     <file>DTresource.qrc</file>
     <file>reset.png</file>
     <file>update.png</file>
