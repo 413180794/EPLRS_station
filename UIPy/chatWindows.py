@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'chatWindows_no_pic.ui'
+# Form implementation generated from reading ui file 'chatWindows.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -173,7 +173,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "指挥控制"))
         self.__my_device_id_label.setText(_translate("Dialog", "本设备ID"))
         self.__my_device_ip_label.setText(_translate("Dialog", "本机IP"))
         self.__other_device_id_label.setText(_translate("Dialog", "对方设备ID"))

@@ -70,7 +70,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "语音交互"))
         self.__status_label.setText(_translate("Dialog", "通话状态"))
         self.status_label.setText(_translate("Dialog", "等待拨号"))
         self.__device_ip_label.setText(_translate("Dialog", "设备IP"))

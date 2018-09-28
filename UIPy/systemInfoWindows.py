@@ -135,7 +135,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "系统自检"))
         self._system_info_label.setText(_translate("Dialog", "系统信息"))
         self.label_2.setText(_translate("Dialog", "CPU温度"))
         self.label_3.setText(_translate("Dialog", "CPU使用率"))

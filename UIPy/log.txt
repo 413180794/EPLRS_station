@@ -14,3 +14,4 @@
 2018-08-08 13:07:35,091 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
 2018-08-08 13:09:46,698 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
 2018-08-08 13:12:08,269 - showWin.py - ERROR -680 - [Errno 101] 网络不可达
+2018-09-28 10:14:44,753 - UDPProtocol.py - ERROR -154 - ('', 'write() only accepts IP addresses, not hostnames')

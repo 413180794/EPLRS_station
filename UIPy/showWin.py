@@ -506,15 +506,17 @@ class MainForm(QMainWindow, Ui_MainWindow):
         ip_id_list = str(ip_comma_interval).split(",")
         for ip_id in ip_id_list:
             ip = ip_id.split(":")[0]
-            id = ip_id.split(":")[1].split('.')[-1]
+            id_ = ip_id.split(":")[1].split('.')[-1]
             ziwang = ip_id.split(":")[1].split(".")[-2]
-            id_item = QTableWidgetItem(id)
+
             ip_item = QTableWidgetItem(ip)
             ziwang_item = QTableWidgetItem(ziwang)
             if ziwang == "Real":
                 kind = "模拟电台"
             else:
                 kind = "虚拟电台"
+                id_ = id_ + "_0"
+            id_item = QTableWidgetItem(id_)
             kind_item = QTableWidgetItem(kind)
             yield [ziwang_item,kind_item, id_item, ip_item]
 

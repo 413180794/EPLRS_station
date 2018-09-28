@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>指挥控制</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -203,10 +203,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_hui_qianjin.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>前进</string>
           </property>
          </widget>
         </item>
@@ -225,10 +225,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_hui_xianghouzhuan.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>向后转</string>
           </property>
          </widget>
         </item>
@@ -251,10 +251,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_hui_zuozhuan.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>向左转</string>
           </property>
          </widget>
         </item>
@@ -273,10 +273,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_hui_xiangyouzhuan.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>向右转</string>
           </property>
          </widget>
         </item>
@@ -299,10 +299,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_hui_fasongwenben.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>发送文本</string>
           </property>
          </widget>
         </item>
@@ -321,10 +321,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/resource/button_guanbi.png);</string>
+           <string notr="true"/>
           </property>
           <property name="text">
-           <string/>
+           <string>关闭</string>
           </property>
          </widget>
         </item>
