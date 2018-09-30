@@ -33,7 +33,7 @@ from TimedMBox import TimedMBox
 from ApplyForVoiceBean import ApplyForVoiceBean
 from RejectVoiceReplyBean import RejectVoiceReplyBean
 from AcceptVoiceReplyBean import AcceptVoiceReplyBean
-
+import netifaces as ni
 
 class MainForm(QMainWindow, Ui_MainWindow):
     reply_for_net_failure = pyqtSignal()
@@ -695,15 +695,23 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     def get_host_ip(self):
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            s.connect(('8.8.8.8', 80))
-            ip = s.getsockname()[0]
+            eth = ni.ifaddresses('eth0')
+            if 2 in eth:
+                ip = eth.get(2)[0].get('addr')
+            else:
+                ip = "127.0.0.1"
         except Exception as e:
             logger.error(e)
-            return '0.0.0.0'
-        finally:
-            s.close()
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                s.connect(('8.8.8.8', 80))
+                ip = s.getsockname()[0]
+            except Exception as e:
+                logger.error(e)
+                return '0.0.0.0'
+            finally:
+                s.close()
         return ip
 
     @pyqtSlot()
