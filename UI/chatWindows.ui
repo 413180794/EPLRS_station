@@ -41,7 +41,7 @@
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>650</x>
+     <x>640</x>
      <y>10</y>
      <width>361</width>
      <height>491</height>
@@ -169,25 +169,60 @@
      </layout>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <item>
+       <widget class="QLabel" name="_send_msg_num_label">
+        <property name="text">
+         <string>发送数据个数</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="send_msg_num">
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QLabel" name="_receive_msg_num_label">
+        <property name="text">
+         <string>接收数据个数</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="receive_msg_num">
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
          <widget class="QPushButton" name="forward_order_button">
           <property name="sizePolicy">
@@ -198,8 +233,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>60</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -211,32 +246,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="turn_about_order_button">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>70</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>向后转</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
          <widget class="QPushButton" name="turn_left_order_button">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -246,8 +255,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>60</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -268,8 +277,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>0</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -277,6 +286,28 @@
           </property>
           <property name="text">
            <string>向右转</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="turn_about_order_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>向后转</string>
           </property>
          </widget>
         </item>
@@ -294,8 +325,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>60</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -303,6 +334,28 @@
           </property>
           <property name="text">
            <string>发送文本</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="send_msg_always_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>持续发送</string>
           </property>
          </widget>
         </item>
@@ -316,8 +369,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>70</width>
-            <height>70</height>
+            <width>60</width>
+            <height>60</height>
            </size>
           </property>
           <property name="styleSheet">

@@ -4,8 +4,9 @@ import hashlib
 import threading
 import time
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox
+import numpy as np
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QTimer
+from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QInputDialog
 import os
 import sys
 
@@ -42,6 +43,40 @@ class ChatDialog(QDialog, Ui_Dialog):
         # self.image_save_path = os.path.join("..","saveImage2")
         # self.max_pic_size = 1024
         # self.pic_data_dict = {}  # 存放每一个文件的数据，用于解决接收udp顺序错误问题
+        self.send_msg_num_count = 0  # 统计发送了多少数据包
+        self.receive_msg_num_count = 0  # 统计接收了多少数据包
+        self.send_msg_always_timer = QTimer(self)
+        self.send_msg_always_timer.timeout.connect(self.send_msg_always)
+        self.send_msg_always_timer.setInterval(1000)
+        self.lam = 0  # 泊松分布参数γ
+
+    def send_msg_always(self):
+        '''
+        持续按照泊松分布发送数据包
+        :return:
+        '''
+        how_time = np.random.poisson(self.lam)
+        msg_bean = TextDataBean(device_category=self.MainForm.device_category,
+                                device_id=self.MainForm.device_id,
+                                data="monishuju"
+                                )
+        for i in range(how_time):
+            self.send_msg_num_count+=1
+            self.send_msg_num.setText(str(self.send_msg_num_count))
+            msg_bean.send(self.MainForm.apply, (self.other_device_ip.text().strip(), self.MainForm.MYPORT))
+
+    @pyqtSlot()
+    def on_send_msg_always_button_clicked(self):
+        '''
+        点击此按钮，将伪造数据，定时按照泊松分布发送，首先询问泊松分布参数γ
+        :return:
+        '''
+        intNum, ok = QInputDialog.getInt(self, "参数设置", "泊松分布参数γ:", 2, 0, 100, 2)
+        if not ok:
+            return
+        else:
+            self.lam = intNum
+            self.send_msg_always_timer.start()
 
     @pyqtSlot()
     def on_textEdit_textChanged(self):
@@ -65,6 +100,11 @@ class ChatDialog(QDialog, Ui_Dialog):
         绑定关闭按钮
         :return:
         '''
+        self.receive_msg_num_count = 0
+        self.send_msg_num_count = 0
+        self.receive_msg_num.setText(str(self.receive_msg_num_count))
+        self.send_msg_num.setText(str(self.send_msg_num_count))
+        self.send_msg_always_timer.stop()
         self.close()
     @pyqtSlot()
     def on_turn_about_order_button_clicked(self):
@@ -96,16 +136,19 @@ class ChatDialog(QDialog, Ui_Dialog):
 
         :return:
         '''
+
         self.if_receive_msg.setText('未接收')
         msg = self.textEdit.document().toPlainText()  # 获取文本框的输入
         if msg.strip() == "":
             return
+        self.send_msg_num_count += 1
+        self.send_msg_num.setText(str(self.send_msg_num_count))
         msg_bean = TextDataBean(device_category=self.MainForm.device_category,
                                 device_id=self.MainForm.device_id,
                                 data=msg
                                 )  # 形成TextBean
         self.textEdit.document().clear()
-        self.listWidget.addTextMsg(self.MainForm.device_name, msg, False, ip=self.MainForm.get_host_ip())
+        self.listWidget.addTextMsg(self.MainForm.device_name, msg, False, ip=self.MainForm.device_ip)
         msg_bean.send(self.MainForm.apply, (self.other_device_ip.text().strip(), self.MainForm.MYPORT))
         with open(self.chat_log_path, 'a',encoding='utf-8') as f:
             f.write("send    txt-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
@@ -219,18 +262,21 @@ class ChatDialog(QDialog, Ui_Dialog):
         :param msg:
         :return:
         '''
+        self.receive_msg_num_count += 1
+        self.receive_msg_num.setText(str(self.receive_msg_num_count))
         text_data_obj = TextDataBean.frombytes(datagram)
         assert type(text_data_obj.data) == str
         self.MainForm.other_equip_ip.setText(str(addr[0]))
         self.MainForm.other_equip_id.setText(text_data_obj.device_name)
-        self.listWidget.addTextMsg(text_data_obj.device_name, text_data_obj.data, True, ip=str(addr[0]))
+        if not text_data_obj.data == "monishuju":
+            self.listWidget.addTextMsg(text_data_obj.device_name, text_data_obj.data, True, ip=str(addr[0]))
         with open(self.chat_log_path, 'a',encoding='utf-8') as f:
             f.write("receive txt-->[{time}]:{other_name}({other_ip})-->{self_name}({self_ip}):   {content}\n".format(
                 time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 other_name=text_data_obj.device_name,
                 other_ip=str(addr[0]),
                 self_name=self.MainForm.device_name,
-                self_ip=self.MainForm.get_host_ip(),
+                self_ip=self.MainForm.device_ip,
                 content=text_data_obj.data
             )
         )

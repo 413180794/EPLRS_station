@@ -141,7 +141,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 "EPLRS_NCS apply send position_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
                     time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     self_name=self.device_name,
-                    self_ip=self.get_host_ip(),
+                    self_ip=self.device_ip,
                     other_name="EPLRS_NCS",
                     other_ip=str(addr[0]),
                     content=bean
@@ -202,7 +202,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 "EPLRS_NCS apply send measure_data-->[{time}]:{self_name}({self_ip})-->{other_name}\({other_ip}):   {content}\n".format(
                     time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                     self_name=self.device_name,
-                    self_ip=self.get_host_ip(),
+                    self_ip=self.device_ip,
                     other_name="EPLRS_NCS",
                     other_ip=str(addr[0]),
                     content=bean
@@ -301,7 +301,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     other_name=position_bean.device_name,
                     other_ip=str(addr[0]),
                     self_name=self.device_name,
-                    self_ip=self.get_host_ip(),
+                    self_ip=self.device_ip,
                     content=position_bean
                 )
             )
@@ -348,7 +348,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 other_name=measure_bean.device_name,
                 other_ip=str(addr[0]),
                 self_name=self.device_name,
-                self_ip=self.get_host_ip(),
+                self_ip=self.device_ip,
                 content=measure_bean
             )
             )
@@ -425,7 +425,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     "send measure_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
                         time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                         self_name=self.device_name,
-                        self_ip=self.get_host_ip(),
+                        self_ip=self.device_ip,
                         other_name=self.other_equip_id.text(),
                         other_ip=self.other_equip_ip.text(),
                         content=bean
@@ -454,7 +454,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
                     "send   position_data-->[{time}]:{self_name}({self_ip})-->{other_name}({other_ip}):   {content}\n".format(
                         time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                         self_name=self.device_name,
-                        self_ip=self.get_host_ip(),
+                        self_ip=self.device_ip,
                         other_name=self.other_equip_id.text(),
                         other_ip=self.other_equip_ip.text(),
                         content=bean
