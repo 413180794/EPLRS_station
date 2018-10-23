@@ -32,7 +32,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="MainWindow_tab">
      <attribute name="title">
@@ -326,12 +326,12 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>31</pointsize>
+        <pointsize>16</pointsize>
         <italic>true</italic>
        </font>
       </property>
       <property name="text">
-       <string>EPLRS</string>
+       <string>更新为新功能</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -926,12 +926,12 @@
           <widget class="QComboBox" name="work_pattern_combox">
            <item>
             <property name="text">
-             <string>低速双工(1.2bps~3840bps)</string>
+             <string>低速双工(20bps~3840bps)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>高速双工(38.4kbps~375kbps)</string>
+             <string>高速双工(38.4kbps~115kbps)</string>
             </property>
            </item>
           </widget>

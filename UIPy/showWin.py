@@ -234,8 +234,9 @@ class MainForm(QMainWindow, Ui_MainWindow):
         if self.other_equip_ip.text() == "":
             QMessageBox.critical(self, "失败", "请选择对话的对象")
         else:
-            reply = QMessageBox.question(self, "参数清除", "是否确认清除" + str(self.other_equip_id.text()) + "设备的参数",
-                                         QMessageBox.Yes | QMessageBox.No)
+            reply = QMessageBox.warning(self, "参数清除",
+                                        "是否确认清除" + str(self.other_equip_id.text()) + "设备的参数。" + "警告!!该操作会使对方设备无法使用!!",
+                                        QMessageBox.Yes | QMessageBox.No)
             if reply == QMessageBox.No:
                 return
             elif reply == QMessageBox.Yes:
@@ -594,10 +595,10 @@ class MainForm(QMainWindow, Ui_MainWindow):
         :return:
         '''
         # 如果需要添加属性，在property_json直接添加就可以了
-        if self.work_pattern_combox.currentText() == "高速双工":
-            control_net_speed(self.interface,"115kbit")
-        elif self.work_pattern_combox.currentText() == "低速双工":
-            control_net_speed(self.interface,"3.84kbit")
+        # if self.work_pattern_combox.currentText() == "高速双工":
+        #     control_net_speed(self.interface,"115kbit")
+        # elif self.work_pattern_combox.currentText() == "低速双工":
+        #     control_net_speed(self.interface,"3.84kbit")
         property_json = {
             "width_band": self.width_band_combox.currentText(),
             "interval": self.interval_combox.currentText(),
@@ -716,7 +717,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_reset_button_clicked(self):
-        reply = QMessageBox.question(self, "参数清除", "是否确认回复出厂设置",
+        reply = QMessageBox.question(self, "恢复出厂设置", "是否确认恢复出厂设置",
                                      QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.No:
             return
@@ -734,7 +735,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_update_system_button_clicked(self):
-        reply = QMessageBox.question(self, "参数清除", "是否确认升级软件",
+        reply = QMessageBox.question(self, "软件升级", "是否确认升级软件",
                                      QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.No:
             return
