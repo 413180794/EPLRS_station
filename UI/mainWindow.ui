@@ -972,6 +972,33 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QLabel" name="__width_band_label_2">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>频点</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="frequency_point_spinbox">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="suffix">
+            <string>MHz</string>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="__interval_label">
@@ -1027,8 +1054,8 @@
      <widget class="Line" name="line">
       <property name="geometry">
        <rect>
-        <x>710</x>
-        <y>60</y>
+        <x>720</x>
+        <y>130</y>
         <width>21</width>
         <height>261</height>
        </rect>
@@ -1047,6 +1074,9 @@
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QDial" name="frequency_point_dial"/>
+       </item>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">

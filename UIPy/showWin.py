@@ -23,7 +23,7 @@ from UDPProtocol import UDPProtocol
 from mainWindow import Ui_MainWindow
 from mylogging import logger
 from systemCheck import *
-from cat_net import control_net_speed, get_net_data_num, convert_bytes_to_string, shut_down
+from cat_net import  get_net_data_num, convert_bytes_to_string, shut_down
 from systemInfoDialog import SystemInfoDialog
 from ClearSuccessBean import ClearSuccessBean
 from ClearDeviceBean import ClearDeviceBean
@@ -125,7 +125,22 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.property_path = os.path.join('property.json')
         self.apply_voice_signal.connect(self.on_apply_voice_signal)
 
+        self.width_band_combox.currentIndexChanged.connect(self.on_width_band_combox_currentIndexChanged)
+        self.frequency_point_dial.valueChanged.connect(self.on_frequency_point_dial_valueChanged)
 
+    @pyqtSlot()
+    def on_frequency_point_dial_valueChanged(self):
+        self.frequency_point_spinbox.setValue(self.frequency_point_dial.value())
+
+    @pyqtSlot()
+    def on_width_band_combox_currentIndexChanged(self):
+        minValue, maxValue = self.width_band_combox.currentText().split("~")
+        minValue = int(str(minValue).strip("MHz"))
+        maxValue = int(str(maxValue).strip("MHz"))
+        self.frequency_point_spinbox.setMinimum(minValue)
+        self.frequency_point_spinbox.setMaximum(maxValue)
+        self.frequency_point_dial.setMinimum(minValue)
+        self.frequency_point_dial.setMaximum(maxValue)
 
     def on_clear_success_signal(self):
         QMessageBox.critical(self, "结果", "清除成功")
@@ -584,7 +599,15 @@ class MainForm(QMainWindow, Ui_MainWindow):
                 property_json = json.load(f)
                 assert type(property_json) == dict
             for key, name in property_json.items():
-                getattr(getattr(self, key + "_combox"), "setCurrentText")(name)
+                if key == "frequency_point":
+                    minValue, maxValue = self.width_band_combox.currentText().split("~")
+                    minValue = int(str(minValue).strip("MHz"))
+                    maxValue = int(str(maxValue).strip("MHz"))
+                    self.frequency_point_dial.setMinimum(minValue)
+                    self.frequency_point_dial.setMaximum(maxValue)
+                    getattr(getattr(self,key+"_spinbox"),"setValue")(name)
+                else:
+                    getattr(getattr(self, key + "_combox"), "setCurrentText")(name)
         else:
             raise Exception
 
@@ -602,7 +625,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         property_json = {
             "width_band": self.width_band_combox.currentText(),
             "interval": self.interval_combox.currentText(),
-            "routing_parameters": self.routing_parameters_combox.currentText()
+            "routing_parameters": self.routing_parameters_combox.currentText(),
+            "frequency_point": self.frequency_point_spinbox.value()
         }
         self.save_property_json(property_json)
         self.send_property(property_json)
@@ -630,7 +654,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         width_band = {"225MHz~512MHz": 1}
         interval = {"625kHz": 625, "25kHz": 25}
         apply_for_net_obj = ApplyForNetBean(
-            width_band=width_band.get(property_json.get("width_band")),
+            width_band=self.frequency_point_spinbox.value(),
             interval=interval.get(property_json.get("interval")),
             routing_parameter=property_json.get("routing_parameters"),
             device_id=self.device_id,

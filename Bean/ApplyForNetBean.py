@@ -75,7 +75,7 @@ class ApplyForNetBean:
         __send.send_apply(bytes(self), addr)
 
     def __bool__(self):
-        if self.width_band in [1, 2, 4, 8] and self.interval in [25, 625] and self.routing_parameter in ["OSPF协议", ]:
+        if self.width_band in [437,] and self.interval in [25, 625] and self.routing_parameter in ["OSPF协议", ]:
             return True
         else:
             return False
