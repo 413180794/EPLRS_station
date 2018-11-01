@@ -155,7 +155,7 @@ class Ui_MainWindow(object):
         self.ip_id_table.horizontalHeader().setStretchLastSection(False)
         self.ip_id_table.verticalHeader().setVisible(False)
         self.label = QtWidgets.QLabel(self.MainWindow_tab)
-        self.label.setGeometry(QtCore.QRect(840, 0, 161, 161))
+        self.label.setGeometry(QtCore.QRect(840, 0, 161, 81))
         font = QtGui.QFont()
         font.setPointSize(31)
         font.setItalic(True)
@@ -163,7 +163,7 @@ class Ui_MainWindow(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.gridLayoutWidget_2 = QtWidgets.QWidget(self.MainWindow_tab)
-        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(830, 160, 171, 381))
+        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(830, 90, 181, 461))
         self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -518,7 +518,7 @@ class Ui_MainWindow(object):
         self.set_property.setObjectName("set_property")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

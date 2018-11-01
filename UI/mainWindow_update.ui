@@ -320,18 +320,18 @@
        <rect>
         <x>840</x>
         <y>0</y>
-        <width>161</width>
-        <height>161</height>
+        <width>151</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>16</pointsize>
+        <pointsize>31</pointsize>
         <italic>true</italic>
        </font>
       </property>
       <property name="text">
-       <string>更新为新功能</string>
+       <string>EPLRS</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -341,9 +341,9 @@
       <property name="geometry">
        <rect>
         <x>830</x>
-        <y>160</y>
+        <y>50</y>
         <width>171</width>
-        <height>381</height>
+        <height>501</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -427,8 +427,8 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QToolButton" name="start_voice_button">
+       <item row="2" column="0">
+        <widget class="QToolButton" name="system_check_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -450,11 +450,11 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>语音交互</string>
+          <string>系统自检</string>
          </property>
          <property name="icon">
           <iconset resource="../resource/DTresource.qrc">
-           <normaloff>:/resource/telephone1.png</normaloff>:/resource/telephone1.png</iconset>
+           <normaloff>:/resource/checking1.png</normaloff>:/resource/checking1.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -547,8 +547,8 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="system_check_button">
+       <item row="1" column="0">
+        <widget class="QToolButton" name="start_voice_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -570,11 +570,11 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>系统自检</string>
+          <string>语音交互</string>
          </property>
          <property name="icon">
           <iconset resource="../resource/DTresource.qrc">
-           <normaloff>:/resource/checking1.png</normaloff>:/resource/checking1.png</iconset>
+           <normaloff>:/resource/telephone1.png</normaloff>:/resource/telephone1.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -587,8 +587,8 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="send_file_button">
+       <item row="4" column="1">
+        <widget class="QToolButton" name="shut_down_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -610,11 +610,11 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>指挥控制</string>
+          <string>关机</string>
          </property>
          <property name="icon">
           <iconset resource="../resource/DTresource.qrc">
-           <normaloff>:/resource/zhihui.png</normaloff>:/resource/zhihui.png</iconset>
+           <normaloff>:/resource/关机.png</normaloff>:/resource/关机.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -707,8 +707,8 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QToolButton" name="shut_down_button">
+       <item row="0" column="0">
+        <widget class="QToolButton" name="send_file_button">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -730,7 +730,47 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>关机</string>
+          <string>指挥控制</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resource/DTresource.qrc">
+           <normaloff>:/resource/zhihui.png</normaloff>:/resource/zhihui.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QToolButton" name="shut_down_button_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>70</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>7</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>更新</string>
          </property>
          <property name="icon">
           <iconset resource="../resource/DTresource.qrc">
@@ -926,12 +966,12 @@
           <widget class="QComboBox" name="work_pattern_combox">
            <item>
             <property name="text">
-             <string>低速双工(20bps~3840bps)</string>
+             <string>低速双工(1.2bps~3840bps)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>高速双工(38.4kbps~115kbps)</string>
+             <string>高速双工(38.4kbps~375kbps)</string>
             </property>
            </item>
           </widget>
@@ -967,6 +1007,33 @@
              <string>225MHz~512MHz</string>
             </property>
            </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <item alignment="Qt::AlignHCenter">
+          <widget class="QLabel" name="__width_band_label_2">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>频点</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="frequency_point_spinbox">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="suffix">
+            <string>MHz</string>
+           </property>
+           <property name="maximum">
+            <number>2000</number>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1027,8 +1094,8 @@
      <widget class="Line" name="line">
       <property name="geometry">
        <rect>
-        <x>710</x>
-        <y>60</y>
+        <x>720</x>
+        <y>130</y>
         <width>21</width>
         <height>261</height>
        </rect>
@@ -1047,6 +1114,9 @@
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QDial" name="frequency_point_dial"/>
+       </item>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
@@ -1133,5 +1203,25 @@
   <include location="../resource/DTresource.qrc"/>
   <include location="../../Mse_station/resource/DTresource.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>shut_down_button_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>update_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>892</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1056</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_slot()</slot>
+ </slots>
 </ui>

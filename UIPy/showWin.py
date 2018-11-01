@@ -128,6 +128,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.width_band_combox.currentIndexChanged.connect(self.on_width_band_combox_currentIndexChanged)
         self.frequency_point_dial.valueChanged.connect(self.on_frequency_point_dial_valueChanged)
 
+    def update_slot(self):
+        QMessageBox.critical(self, "更新", "更新功能")
     @pyqtSlot()
     def on_frequency_point_dial_valueChanged(self):
         self.frequency_point_spinbox.setValue(self.frequency_point_dial.value())
