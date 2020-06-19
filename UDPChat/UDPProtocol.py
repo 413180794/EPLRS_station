@@ -6,12 +6,17 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import threads
 from mylogging import logger
 
+def get_md5(byte_code):
+    a = hashlib.md5()
+    a.update(byte_code)
+    return a.hexdigest
 
 class UDPProtocol(DatagramProtocol):
 
     def __init__(self, *, MainForm):
         super(UDPProtocol, self).__init__()
         self.MainForm = MainForm
+        self.message_md5 = None
 
     def startProtocol(self):
         logger.info("启动udp")
@@ -19,7 +24,9 @@ class UDPProtocol(DatagramProtocol):
     def datagramReceived(self, datagram, addr):
         # print(datagram)
         # 取出前16个字节，拿到元祖第一个内容，解码utf-8,去除空格
-
+        md5 = get_md5(datagram)
+        if self.message_md5 == md5:
+            return
         usage = struct.unpack("!16s", datagram[0:16])[0].decode('utf-8').strip('\x00')
         try:
             function_ = functools.partial(getattr(self, usage + "_handle"), datagram, addr)
